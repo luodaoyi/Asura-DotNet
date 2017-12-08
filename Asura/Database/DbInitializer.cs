@@ -14,28 +14,32 @@ namespace Asura.Database
         {
             context.Database.EnsureCreated();
             
-            if (!context.Users.Any())
+            if (!context.Accounts.Any())
             {
-                context.Users.Add(new User()
+                context.Accounts.Add(new Account()
                 {
-                    Name = "admin",
-                    AuthCode = MD5Helper.MD5Hash("admin"),
-                    Activated = DateTime.Now,
-                    Loggeg = DateTime.Now,
-                    Group = 1,
-                    Created = DateTime.Now,
-                    Mail = "admin@admin.com",
-                    ScreenName="admin"
+                    Username = siteConfig.Account.Username,
+                    Address = siteConfig.Account.Address,
+                    CreateTime = DateTime.Now,
+                    Email = siteConfig.Account.Mail,
+                    LoginIp = "127.0.0.1",
+                    LoginTime = DateTime.Now,
+                    LogoutTime = DateTime.Now,
+                    Password =MD5Helper.MD5Hash(siteConfig.Account.Password),
+                    PhoneN = siteConfig.Account.PhoneNumber,
+                    Token = string.Empty
                 });
             }
-            if (!context.Metas.Any())
+            if (!context.Bloggers.Any())
             {
-                context.Metas.Add(new Meta()
+                context.Bloggers.Add(new Blogger()
                 {
-                    Slug="defaule",
-                    Name = "默认分类",
-                    Type = 1,
-                    Description = "默认"
+                   BlogName = siteConfig.Blogger.BlogName,
+                    BeiAn = siteConfig.Blogger.Beian,
+                    BTitle = siteConfig.Blogger.Btitle,
+                    Copyright = siteConfig.Blogger.CopyRight,
+                    SubTitle = siteConfig.Blogger.SubTitle,
+                    
                 });
             }
             context.SaveChanges();

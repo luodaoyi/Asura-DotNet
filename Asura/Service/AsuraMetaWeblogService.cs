@@ -8,17 +8,7 @@ namespace Asura.Service
 {
     public class AsuraMetaWeblogService: IMetaWeblogProvider
     {
-        /// <summary>
-        /// 允许操作
-        /// </summary>
-        /// <param name="username">用户名</param>
-        /// <param name="password">密码</param>
-        /// <returns></returns>
-        private bool AllowExcute(string username, string password)
-        {
-            return _dbContext.Users
-                       .Count(u => (u.Name == username && MD5Helper.MD5Hash(password) == u.AuthCode)) == 1;
-        }
+        
         private readonly AsuraContext _dbContext;
 
         public AsuraMetaWeblogService(AsuraContext dbContext)
@@ -34,20 +24,8 @@ namespace Asura.Service
 
         public BlogInfo[] GetUsersBlogs(string key, string username, string password)
         {
-            if (!AllowExcute(username, password))
-            {
-                return new BlogInfo[0];
-            }
-
-            var blogs = new List<BlogInfo>();
-            blogs.Add(new BlogInfo()
-            {
-                blogid = "1",
-                blogName = "我的笔记",
-                url = "https://luodaoyi.com"
-                
-            });
-            return blogs.ToArray();
+            // TODO
+            return null;
         }
 
 
@@ -66,10 +44,7 @@ namespace Asura.Service
 
         public string AddPost(string blogid, string username, string password, Post post, bool publish)
         {
-            if (AllowExcute(username, password))
-            {
-                return "认证失败";
-            }
+            // TODO
             return null;
         }
 
@@ -88,25 +63,8 @@ namespace Asura.Service
 
         public CategoryInfo[] GetCategories(string blogid, string username, string password)
         {
-            if (!AllowExcute(username, password))
-            {
-                return new CategoryInfo[0];
-            }
-            var categorys = _dbContext.Metas.Where(w => w.Type == 1).ToList();
-            var categoryInfos=new List<CategoryInfo>();
-            foreach (var meta in categorys)
-            {
-                var categoryObj = new CategoryInfo()
-                {
-                    categoryid = meta.MetaId.ToString(),
-                    description = meta.Description,
-                    htmlUrl = $"/category/{meta.Slug}.html",
-                    rssUrl = $"/rss.xml?category={meta.MetaId}",
-                    title = meta.Name
-                };
-                categoryInfos.Add(categoryObj);
-            }
-            return categoryInfos.ToArray();
+            // TODO
+            return null;
         }
 
         public MediaObjectInfo NewMediaObject(string blogid, string username, string password, MediaObject mediaObject)
