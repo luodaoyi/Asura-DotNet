@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Asura.Service
+@{
+    var blogger = new Blogger();
+    if (ViewData["Blogger"] != null)
+    {
+        blogger = ViewData["Blogger"] as Blogger;
+    } 
+    
+}
+<!DOCTYPE html>
 <html lang="zh-cn">
 <head>
     <meta charset="utf-8">
@@ -7,11 +16,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="always">
     <title>@ViewData["Title"]</title>
-
-
     <link rel="apple-touch-icon" href="//@ViewData["Qiniu"]/static/img/favicon.ico">
-    <link rel="search" type="application/opensearchdescription+xml" href="//@ViewData["Domain"]/opensearch.xml" title="@ViewData["BTitle"]">
-
+    <link rel="search" type="application/opensearchdescription+xml" href="//@blogger.Domain/opensearch.xml" title="@blogger.Btitle">
+    
+    <link rel="stylesheet" href="~/css/site.min.css">
+    
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@ViewData["Domain"]/rss.html">
     <meta name="description" content="@ViewData["Description"]">
 </head>
@@ -25,9 +34,9 @@
                     <a href="/"></a>
                 </div>
                 <h1>
-                    <a href="/">@ViewData["BlogName"]</a>
+                    <a href="/">@blogger.BlogName</a>
                 </h1>
-                <p class="subtitle">@ViewData["SubTitle"]</p>
+                <p class="subtitle">@blogger.SubTitle</p>
                 <nav id="main-nav">
                     <ul>
                         <li>
@@ -46,12 +55,12 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/post/blogroll.html">
+                            <a href="/blogroll.html">
                                 <span>友链</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/post/about.html">
+                            <a href="/about.html">
                                 <span>关于</span>
                             </a>
                         </li>
@@ -59,7 +68,7 @@
                 </nav>
                 <nav id="sub-nav">
                     <div class="social">
-                        <a target="_blank" class="rss" href="//@ViewData["Domain"]/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
+                        <a target="_blank" class="rss" href="//@blogger.Domain/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
                         <a class="search" href="/search.html" title="站内搜索" aria-label="站内搜索">Search</a>
                     </div>
                 </nav>
@@ -69,8 +78,8 @@
     <div class="mid-col">
         <div class="mid-col-container">@RenderBody()</div>
         <footer id=footer class=inner>
-            © @DateTime.Now.Year - @ViewData["BTitle"] -
-            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@ViewData["Beian"]</a>
+            © @DateTime.Now.Year - @blogger.Btitle -
+            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@blogger.Beian</a>
             <br>Powered by
             <a target=_blank href="//github.com/luodaoyi/asura">Asura</a> &
             <a target=_blank href="//github.com/eiblog/eiblog">Eiblog</a> &
@@ -78,8 +87,7 @@
         </footer>
     </div>
 </div>
-<input type=hidden id=CURRENT_PAGE value="@ViewData["CurrentPage"]">
-<input type=hidden id=CDN_DOMAIN value="//@ViewData["Qiniu"]">
+<script type="text/javascript" src="~/js/site.min.js"></script>
 
 </body>
 </html>

@@ -49,19 +49,16 @@ namespace Asura
             }
             app.UseMetaWeblog("/api/xmlrpc");
 
+            
             app.UseStaticFiles();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
-                routes.MapRoute(
-                    name: "post",
-                    template: "{controller=Post}/{action=Index}/{id?}"
-                );
             });
+            
         }
     }
 }

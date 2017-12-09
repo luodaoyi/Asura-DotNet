@@ -47,24 +47,29 @@ namespace Asura.Database
                 TagName = "默认"
             };
             context.Tags.Add(tag);
-            var article = new Article()
+            
+            for (int i = 0; i < 30; i++)
             {
-                
-                Tags = context.Tags.ToList(),
-                Title = "Hello World",
-                Slug = "hello-world",
-                Author = "luodaoyi",
-                Content = "# Hello World \n ## 你好世界！\n 如果你看到这条信息说明就好了",
-                Count = 10,
-                CreateTime = DateTime.Now,
-                DeleteTime = DateTime.Now,
-                UpdateTime = DateTime.Now,
-                SortFlag = 1,
-                Desc = "瞎搞",
-                IsDraft = false,
-                Excerpt = "本片文章用来记录我在Golang开发学习过程中遇到的有关error的一些坑。或许你也遇到，或许你能在这里找到答案。当然通过error的例子，你也应该联想到其它场景。"
-            };
-            context.Articles.Add(article);
+                var article = new Article()
+                {
+                    
+                    Title = "Hello World",
+                    Slug = $"hello-world{i}",
+                    Author = "luodaoyi",
+                    Content = "# Hello World \n ## 你好世界！\n 如果你看到这条信息说明就好了",
+                    Count = 10,
+                    CreateTime = DateTime.Now,
+                    DeleteTime = DateTime.Now,
+                    UpdateTime = DateTime.Now,
+                    SortFlag = 1,
+                    Desc = "瞎搞",
+                    IsDraft = false,
+                    Excerpt = "本片文章用来记录我在Golang开发学习过程中遇到的有关error的一些坑。或许你也遇到，或许你能在这里找到答案。当然通过error的例子，你也应该联想到其它场景。"
+                };
+                context.Articles.Add(article);
+            }
+           
+            
             
             context.SaveChanges();
         }

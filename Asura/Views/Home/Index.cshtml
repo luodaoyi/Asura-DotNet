@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["CurrentPage"] = "blog-home";
 }
 @model Asura.Models.HomeViewModel
 
@@ -10,7 +11,7 @@
         <article class="post post-list">
             <div class="meta">
                 <div class="date">
-                    <time>@article.CreateTime.ToString("Jan 02, 2006")</time>
+                    <time>@article.CreateTime.ToString("D")</time>
                 </div>
                 <div class="comment">
                     <a href="/p/@(article.Slug).html#comments">@article.Count Comments</a>
@@ -20,7 +21,7 @@
                 <a href="/p/@(article.Slug).html">@article.Title</a>
             </h1>
             <div class="entry-content">
-                <p><markdown text="@article.Excerpt"/>[...]</p>
+                <p><string2html text="@article.Excerpt"/>[...]</p>
                 <p>
                     <a href="/p/@(article.Slug).html" class="more-link">继续阅读 »</a>
                 </p>
@@ -36,7 +37,7 @@
         }
         @if (Model.Next > 0)
         {
-            <a href="?pn=@Model.Next" class="next">下一页 »</a> 
+            <a href="/page/@Model.Next" class="next">下一页 »</a> 
         }
         <div class="center">
             <a href="/archives.html">博客归档</a>
