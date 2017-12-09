@@ -1,49 +1,85 @@
-﻿<html>
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Asura</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width,minimum-scale=1.0" name="viewport">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="always">
+    <title>@ViewData["Title"]</title>
 
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap-theme.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+
+    <link rel="apple-touch-icon" href="//@ViewData["Qiniu"]/static/img/favicon.ico">
+    <link rel="search" type="application/opensearchdescription+xml" href="//@ViewData["Domain"]/opensearch.xml" title="@ViewData["BTitle"]">
+
+    <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@ViewData["Domain"]/rss.html">
+    <meta name="description" content="@ViewData["Description"]">
 </head>
 <body>
 
-@RenderBody()
+<div class="container">
+    <div class="left-col">
+        <div class="intrude-less">
+            <header id="header" class="inner">
+                <div class="profilepic">
+                    <a href="/"></a>
+                </div>
+                <h1>
+                    <a href="/">@ViewData["BlogName"]</a>
+                </h1>
+                <p class="subtitle">@ViewData["SubTitle"]</p>
+                <nav id="main-nav">
+                    <ul>
+                        <li>
+                            <a href="/">
+                                <span>首页</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/series.html">
+                                <span>专题</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/archives.html">
+                                <span>归档</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/post/blogroll.html">
+                                <span>友链</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/post/about.html">
+                                <span>关于</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <nav id="sub-nav">
+                    <div class="social">
+                        <a target="_blank" class="rss" href="//@ViewData["Domain"]/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
+                        <a class="search" href="/search.html" title="站内搜索" aria-label="站内搜索">Search</a>
+                    </div>
+                </nav>
+            </header>
+        </div>
+    </div>
+    <div class="mid-col">
+        <div class="mid-col-container">@RenderBody()</div>
+        <footer id=footer class=inner>
+            © @DateTime.Now.Year - @ViewData["BTitle"] -
+            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@ViewData["Beian"]</a>
+            <br>Powered by
+            <a target=_blank href="//github.com/luodaoyi/asura">Asura</a> &
+            <a target=_blank href="//github.com/eiblog/eiblog">Eiblog</a> &
+            <a target=_blank rel="nofollow designer" class=external href="//imququ.com">JerryQu</a>
+        </footer>
+    </div>
+</div>
+<input type=hidden id=CURRENT_PAGE value="@ViewData["CurrentPage"]">
+<input type=hidden id=CDN_DOMAIN value="//@ViewData["Qiniu"]">
 
-
-<environment include="Development">
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-</environment>
-<environment exclude="Development">
-    <script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"
-            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-            asp-fallback-test="window.jQuery"
-            crossorigin="anonymous"
-            integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-    </script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-            crossorigin="anonymous"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-    </script>
-    <script src="~/js/site.min.js" asp-append-version="true"></script>
-</environment>
-@RenderSection("Scripts", required: false)
 </body>
 </html>

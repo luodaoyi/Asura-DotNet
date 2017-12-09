@@ -25,8 +25,7 @@ namespace Asura
                 try
                 {
                     var context = services.GetRequiredService<AsuraContext>();
-                    var siteConfig = services.GetRequiredService<SiteConfig>();
-                    DbInitializer.Initialize(context,siteConfig);
+                    DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

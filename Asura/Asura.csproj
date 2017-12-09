@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
+    <PackageReference Include="Markdown" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />
     <PackageReference Include="WilderMinds.MetaWeblog" Version="1.2.3" />
@@ -14,6 +15,7 @@
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Migrations" />
     <Folder Include="wwwroot\images" />
   </ItemGroup>
   <ItemGroup>

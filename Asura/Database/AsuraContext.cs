@@ -13,26 +13,32 @@ namespace Asura.Database
         public AsuraContext(DbContextOptions<AsuraContext> option) : base(option)
         {
         }
+
         /// <summary>
         /// 用户
         /// </summary>
         public DbSet<Account> Accounts { get; set; }
+
         /// <summary>
         /// 博客
         /// </summary>
         public DbSet<Blogger> Bloggers { get; set; }
+
         /// <summary>
         /// 专题系列
         /// </summary>
         public DbSet<Serie> Series { get; set; }
+
         /// <summary>
         /// 文章
         /// </summary>
         public DbSet<Article> Articles { get; set; }
+
         /// <summary>
         /// 归档
         /// </summary>
         public DbSet<Archive> Archives { get; set; }
+
         /// <summary>
         /// 标签
         /// </summary>
@@ -81,14 +87,14 @@ namespace Asura.Database
         public string Content { get; set; }
 
         /// <summary>
-        /// 归属专题
+        /// 标签
         /// </summary>
-        public int SerieId { get; set; }
-
+        public List<Tag> Tags { get; set; }
+        
         /// <summary>
-        /// tagname
+        /// 专题ID
         /// </summary>
-        public List<string> Tags { get; set; }
+//        public int SerieId { get; set; }
 
         /// <summary>
         /// 是否是草稿
@@ -129,6 +135,11 @@ namespace Asura.Database
         /// disqus thread
         /// </summary>
         public string Thread { get; set; }
+
+        /// <summary>
+        /// 用于排序的字段 越大越在前面
+        /// </summary>
+        public int SortFlag { get; set; }
     }
 
     /// <summary>
@@ -140,7 +151,7 @@ namespace Asura.Database
         public DateTime Time { get; set; }
         public List<Article> Articles { get; set; }
     }
-    
+
     /// <summary>
     /// 专题
     /// </summary>
@@ -167,8 +178,8 @@ namespace Asura.Database
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
-
         public List<Article> Articles { get; set; }
+
     }
 
 
@@ -217,21 +228,15 @@ namespace Asura.Database
         public string ArchivesSay { get; set; }
 
         public List<Archive> Archives { get; set; }
-
-        /// <summary>
-        /// 标签 name->tag
-        /// </summary>
-        public List<Tag> Tags { get; set; }
     }
-    
-    
+
 
     /// <summary>
     /// 用户账户
     /// </summary>
     public class Account
     {
-        public int UserId { get; set; }
+        public int AccountId { get; set; }
 
         /// <summary>
         /// 账户名
@@ -284,7 +289,7 @@ namespace Asura.Database
         /// </summary>
         public string LoginIp { get; set; }
     }
-    
+
     /// <summary>
     /// 标签
     /// </summary>

@@ -28,11 +28,12 @@ namespace Asura
             services.AddMetaWeblog<AsuraMetaWeblogService>();
             services.AddDbContext<AsuraContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            //添加MVC
-            services.AddMvc();
+            
             //添加options
             services.AddOptions();
             services.Configure<SiteConfig>(Configuration.GetSection("SiteConfig"));
+            //添加MVC
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +55,12 @@ namespace Asura
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}"
+                );
+                routes.MapRoute(
+                    name: "post",
+                    template: "{controller=Post}/{action=Index}/{id?}"
+                );
             });
         }
     }

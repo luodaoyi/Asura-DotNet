@@ -53,6 +53,11 @@ namespace Asura.Service
         /// 博客细节配置
         /// </summary>
         public Blogger Blogger { get; set; }
+
+        /// <summary>
+        /// 禁止访问的黑名单
+        /// </summary>
+        public List<string> BlackIP { get; set; }
     }
 
     /// <summary>
@@ -69,11 +74,6 @@ namespace Asura.Service
         /// 管理界面
         /// </summary>
         public int PageSize { get; set; }
-
-        /// <summary>
-        /// 起始ID，预留id不时之需, 不用管
-        /// </summary>
-        public int StartId { get; set; }
 
         /// <summary>
         /// 文章描述前缀
@@ -158,6 +158,7 @@ namespace Asura.Service
     /// </summary>
     public class Blogger
     {
+        public string Domain { get; set; }
         /// <summary>
         /// left显示名称
         /// </summary>
@@ -182,5 +183,9 @@ namespace Asura.Service
         /// 版权声明
         /// </summary>
         public string CopyRight { get; set; }
+        /// <summary>
+        /// 头像base64
+        /// </summary>
+        public string Avatar { get; set; }
     }
 }
