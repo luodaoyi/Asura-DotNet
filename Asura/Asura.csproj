@@ -17,4 +17,7 @@
   <ItemGroup>
     <Reference Include="System.Private.CoreLib" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\lib" />
+  </ItemGroup>
 </Project>
