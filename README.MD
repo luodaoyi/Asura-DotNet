@@ -2,6 +2,7 @@
 
 这是个.net core mvc 和entityframeworkcore 用 sqlite数据库写的单人博客
 
+DEMO: [https://dev.luodaoyi.com](https://dev.luodaoyi.com)
 >正在慢慢完成中。
 
 感谢[https://imququ.com/](https://imququ.com/)和[https://deepzz.com/](https://deepzz.com/) 两位大佬

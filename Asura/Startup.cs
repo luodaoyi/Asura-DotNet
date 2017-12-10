@@ -51,10 +51,9 @@ namespace Asura
 //            }
             
             app.UseDeveloperExceptionPage();
-            app.UseMetaWeblog("/api/xmlrpc");
-
-            
             app.UseStaticFiles();
+            
+            app.UseMetaWeblog("/api/xmlrpc");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
