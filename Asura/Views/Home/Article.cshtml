@@ -30,6 +30,7 @@
         <div class="entry-content" itemprop=articleBody>
             <markdown text="@Model.Article.Header"/>
             <markdown text="@Model.Article.Content"/>
+            
             <p>本文链接：
                 <a rel="bookmark" title="Permalink to @ViewData["Title"]" href="//@blogger.Domain/p/@(Model.Article.Slug).html" itemprop="url">https://@blogger.Domain/p/@(Model.Article.Slug).html</a>，
                 <a href="//@blogger.Domain/p/@(Model.Article.Slug).html#comments">参与评论 »</a>

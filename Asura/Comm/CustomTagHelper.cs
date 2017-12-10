@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using HeyRed.MarkdownSharp;
+using Markdig;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -15,13 +15,12 @@ namespace Asura.TagHelpers
         public ModelExpression Source { get; set; }
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var markdownTransformer = new Markdown();
             if (Source != null)
             {
                 Text = Source.Model.ToString();
             }
 
-            var result = markdownTransformer.Transform(Text);
+            var result = Markdown.ToHtml(Text);
             output.TagName = "div";
             output.Content.SetHtmlContent(result);
             output.TagMode = TagMode.StartTagAndEndTag;
@@ -29,7 +28,7 @@ namespace Asura.TagHelpers
     }
     
     
-    [HtmlTargetElement("string2html")]
+    [HtmlTargetElement("markplain")]
     public class String2HtmlTagHelper : TagHelper
     {
         [HtmlAttributeName("text")]
@@ -39,13 +38,11 @@ namespace Asura.TagHelpers
         public ModelExpression Source { get; set; }
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var markdownTransformer = new Markdown();
             if (Source != null)
             {
                 Text = Source.Model.ToString();
             }
-
-            var result = markdownTransformer.Transform(Text);
+            var result = Markdown.ToPlainText(Text);
             output.TagName = "p";
             output.Content.SetHtmlContent(result);
             output.TagMode = TagMode.StartTagAndEndTag;
