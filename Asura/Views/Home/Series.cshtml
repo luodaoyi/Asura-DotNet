@@ -1,0 +1,30 @@
+﻿@model List<Asura.Models.SerieViewModel>
+
+@{
+    Layout = "_Layout";
+}
+
+<div id=content class=inner>
+    <article class="post post-series">
+        <h1 class=title>专题</h1>
+        <div class="entry-content">
+            <p>@ViewData["SeriesSubTitle"]</p>
+
+            @foreach (var serie in Model)
+            {
+                <h3 id="toc-@(serie.SerieId)">@serie.Name</h3>
+                <p>@serie.Desc</p>
+                <ul>
+                    @foreach (var article in serie.Articles)
+                    {
+                        <li>
+                            <a href="/p/@(article.Slug).html">@article.Title</a>
+                            <span class="date">(@article.CreateTime.ToString("D"))</span>
+                        </li>
+                    }
+                </ul>
+            }
+
+        </div>
+    </article>
+</div>

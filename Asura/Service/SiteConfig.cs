@@ -187,5 +187,9 @@ namespace Asura.Service
         /// 头像base64
         /// </summary>
         public string Avatar { get; set; }
+        /// <summary>
+        /// 归档页子标题内容
+        /// </summary>
+        public string SeriesSubTitle { get; set; }
     }
 }

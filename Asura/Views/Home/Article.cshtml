@@ -1,9 +1,107 @@
-﻿@model object
+﻿@model Asura.Models.ArticleViewModel
+@using Asura.Service
 
 @{
-    ViewBag.Title = "title";
     Layout = "_Layout";
+    var blogger = new Blogger();
+    if (ViewData["Blogger"] != null)
+    {
+        blogger = ViewData["Blogger"] as Blogger;
+    }
+    var days = (Model.Article.UpdateTime - DateTime.Now).Days;
 }
 
-<h2>ext: @ViewData["Type"]</h2>
-<h1>slug @Model</h1>
+<div id=content class=inner>
+    
+    
+    <article class="post post-@(Model.Article.ArticleId)" itemscope itemtype="http://schema.org/Article">
+        <div class=meta>
+            <div class=date>
+                <time itemprop=datePublished content="@(Model.Article.CreateTime)">@(Model.Article.CreateTime.ToString("D")) </time>
+            </div>
+            <div class="date-modified">
+                <time itemprop=dateModified content="@(Model.Article.CreateTime)">@(Model.Article.CreateTime.ToString("D")) </time>
+            </div>
+            <div class=comment>
+                <a href="#comments">@Model.Article.Count Comments</a>
+            </div>
+        </div>
+        <h1 class=title itemprop=headline>@Model.Article.Title</h1>
+        <div class="entry-content" itemprop=articleBody>
+            <markdown text="@Model.Article.Header"/>
+            <markdown text="@Model.Article.Content"/>
+            <p>本文链接：
+                <a rel="bookmark" title="Permalink to @ViewData["Title"]" href="//@blogger.Domain/p/@(Model.Article.Slug).html" itemprop="url">https://@blogger.Domain/p/@(Model.Article.Slug).html</a>，
+                <a href="//@blogger.Domain/p/@(Model.Article.Slug).html#comments">参与评论 »</a>
+            </p>
+            <p>--<acronym title="End of File">EOF</acronym>--</p>
+            <p class="post-info">发表于
+                <span class="date">@(Model.Article.CreateTime.ToString("D"))</span>
+                @if (Model.Tags.Count>0)
+                {
+                    <span>并被添加「 
+                        @foreach (var tag in Model.Tags)
+                        {
+                            <a href="/tag/@(tag.TagName)"> @tag.TagName 、</a>
+                        }
+                        」标签</span>
+                }
+                @if ((Model.Article.UpdateTime - Model.Article.CreateTime).Days>1)
+                {
+                    <span>最后修改于
+                        <span class="date">@Model.Article.UpdateTime.ToString("D")</span>
+                    </span>
+                }
+            </p>
+            
+            <p class="copyright-info">
+                @Html.Raw(blogger.CopyRight)
+                <a href="//@blogger.Domain/p/about.html#toc_1">更多说明 »</a>
+            </p>
+            @if (days > 100)
+            {
+                <p class="expire-tips">提醒：本文最后更新于 @days 天前，文中所描述的信息可能已发生改变，请谨慎使用。</p>
+            }
+            
+            @if (Model.Series.Count > 0)
+            {
+                foreach (var serie in Model.Series)
+                {
+                    <div class="entry-series">
+                        <h3>专题「@serie.Name」的其它文章
+                            <a href="/series.html#toc-@serie.SerieId" title="更多">»</a>
+                        </h3>
+                        <ul>
+                            @foreach (var serieArticle in serie.Articles)
+                            {
+                                <li>
+                                    <a href="/p/@(serieArticle.Slug).html">@(serieArticle.Title)</a>
+                                    <span class="date">(@(serieArticle.CreateTime.ToShortDateString()))</span>
+                                </li> 
+                            }
+                        </ul>
+                    </div>
+                }
+            }
+        </div>
+    </article>
+    <nav class="page-navi">
+        @if (Model.Prev != null)
+        {
+            <a href="/p/@(Model.Prev.Slug).html" class=prev>« @Model.Prev.Title</a>
+        }
+        @if (Model.Next != null)
+        {
+            <a href="/p/@(Model.Next.Slug).html" class=next>« @Model.Next.Title »</a>
+        }
+    </nav>
+    
+    <section id=comments>
+        <h1 class=title>Comments</h1>
+        <div class=total_thread data-identifier="post-@(Model.Article.Slug)" data-url="https://@blogger.Domain/P/@(Model.Article.Slug).html"></div>
+    </section>
+ 
+
+    </div>
+
+

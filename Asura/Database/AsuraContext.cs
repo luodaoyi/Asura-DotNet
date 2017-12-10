@@ -34,23 +34,45 @@ namespace Asura.Database
         /// </summary>
         public DbSet<Article> Articles { get; set; }
 
-        /// <summary>
-        /// 归档
-        /// </summary>
-        public DbSet<Archive> Archives { get; set; }
 
         /// <summary>
         /// 标签
         /// </summary>
         public DbSet<Tag> Tags { get; set; }
+        
+        public DbSet<SerieArticle> SerieArticles { get; set; }
+        public DbSet<TagArticle> TagArticles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Serie>().HasIndex(m => m.Name).IsUnique(true);
             modelBuilder.Entity<Serie>().HasIndex(m => m.Slug).IsUnique(true);
-
+            
             modelBuilder.Entity<Article>().HasIndex(m => m.Slug).IsUnique(true);
+            modelBuilder.Entity<Tag>().HasIndex(m => m.TagName).IsUnique(true);
+            
+            modelBuilder.Entity<SerieArticle>()
+                .HasKey(t => new { t.ArticleId, t.SerieId });
+            modelBuilder.Entity<SerieArticle>()
+                .HasOne(ac => ac.Article)
+                .WithMany(se => se.SerieArticle)
+                .HasForeignKey(pt => pt.ArticleId);
+            modelBuilder.Entity<SerieArticle>()
+                .HasOne(ac => ac.Serie)
+                .WithMany(se => se.SerieArticle)
+                .HasForeignKey(pt => pt.SerieId);
+            
+            modelBuilder.Entity<TagArticle>()
+                .HasKey(t => new { t.ArticleId, t.TagId });
+            modelBuilder.Entity<TagArticle>()
+                .HasOne(ac => ac.Article)
+                .WithMany(se => se.TagArticles)
+                .HasForeignKey(pt => pt.ArticleId);
+            modelBuilder.Entity<TagArticle>()
+                .HasOne(ac => ac.Tag)
+                .WithMany(se => se.TagArticles)
+                .HasForeignKey(pt => pt.TagId);
         }
     }
 
@@ -89,12 +111,12 @@ namespace Asura.Database
         /// <summary>
         /// 标签
         /// </summary>
-        public List<Tag> Tags { get; set; }
-        
+        public List<TagArticle> TagArticles { get; set; }
+
         /// <summary>
-        /// 专题ID
+        /// 所属专题
         /// </summary>
-//        public int SerieId { get; set; }
+        public List<SerieArticle> SerieArticle { get; set; }
 
         /// <summary>
         /// 是否是草稿
@@ -143,16 +165,6 @@ namespace Asura.Database
     }
 
     /// <summary>
-    /// 归档 档案
-    /// </summary>
-    public class Archive
-    {
-        public int ArchiveId { get; set; }
-        public DateTime Time { get; set; }
-        public List<Article> Articles { get; set; }
-    }
-
-    /// <summary>
     /// 专题
     /// </summary>
     public class Serie
@@ -178,8 +190,8 @@ namespace Asura.Database
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
-        public List<Article> Articles { get; set; }
 
+        public List<SerieArticle> SerieArticle { get; set; }
     }
 
 
@@ -226,8 +238,6 @@ namespace Asura.Database
         /// 归档描述
         /// </summary>
         public string ArchivesSay { get; set; }
-
-        public List<Archive> Archives { get; set; }
     }
 
 
@@ -297,5 +307,22 @@ namespace Asura.Database
     {
         public int TagId { get; set; }
         public string TagName { get; set; }
+        public List<TagArticle> TagArticles { get; set; }
+    }
+
+    public class SerieArticle
+    {
+        public int ArticleId { get; set; }
+        public Article Article { get; set; }
+        public int SerieId { get; set; }
+        public Serie Serie { get; set; }
+    }
+
+    public class TagArticle
+    {
+        public int TagId { get; set; }
+        public Tag Tag { get; set; }
+        public int ArticleId { get; set; }
+        public Article Article { get; set; }
     }
 }

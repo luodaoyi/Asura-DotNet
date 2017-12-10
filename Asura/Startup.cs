@@ -32,21 +32,25 @@ namespace Asura
             //添加options
             services.AddOptions();
             services.Configure<SiteConfig>(Configuration.GetSection("SiteConfig"));
+
             //添加MVC
             services.AddMvc();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+//            if (env.IsDevelopment())
+//            {
+//                app.UseDeveloperExceptionPage();
+//            }
+//            else
+//            {
+//                app.UseExceptionHandler("/Home/Error");
+//            }
+            
+            app.UseDeveloperExceptionPage();
             app.UseMetaWeblog("/api/xmlrpc");
 
             
@@ -58,6 +62,7 @@ namespace Asura
                     template: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
+            
             
         }
     }
