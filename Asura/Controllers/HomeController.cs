@@ -21,18 +21,11 @@ namespace Asura.Controllers
     {
         private SiteConfig Config;
         private AsuraContext db;
-        private IMemoryCache _cache;
-        private MemoryCacheEntryOptions _cacheEntryOptions;
 
-        public HomeController(IOptions<SiteConfig> option, AsuraContext context, IMemoryCache memoryCache)
+        public HomeController(IOptions<SiteConfig> option, AsuraContext context)
         {
             Config = option.Value;
             db = context;
-            _cache = memoryCache;
-            _cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(
-                    TimeSpan.FromMinutes(Config.Blogger.CacheExpireSecont)
-                );
         }
 
         [Route("")]
@@ -48,7 +41,6 @@ namespace Asura.Controllers
             }
 
             page = page <= 0 ? 1 : page;
-            string cacheKey = $"page-{page}";
 
             ViewData["Blogger"] = Config.Blogger;
             ViewData["Qiniu"] = Config.QiNiu.Domain;
@@ -57,21 +49,16 @@ namespace Asura.Controllers
 
             var pageSize = 10;
             var viewModel = new HomeViewModel();
-            if (!_cache.TryGetValue(cacheKey, out viewModel))
-            {
-                viewModel = new HomeViewModel();
-                var startRow = (page - 1) * pageSize;
-                var query = await db.Articles.Where(w => w.IsDraft == false).OrderByDescending(p => p.CreateTime)
-                    .Skip(startRow)
-                    .Take(pageSize).ToListAsync();
+            var startRow = (page - 1) * pageSize;
+            var query = await db.Articles.Where(w => w.IsDraft == false).OrderByDescending(p => p.CreateTime)
+                .Skip(startRow)
+                .Take(pageSize).ToListAsync();
 
-                viewModel.Articles = query;
-                viewModel.Prev = page - 1;
-                viewModel.Next = (await db.Articles.Where(w => w.IsDraft == false).CountAsync()) > page * pageSize + 1
-                    ? page + 1
-                    : 0;
-                _cache.Set(cacheKey, viewModel,_cacheEntryOptions);
-            }
+            viewModel.Articles = query;
+            viewModel.Prev = page - 1;
+            viewModel.Next = (await db.Articles.Where(w => w.IsDraft == false).CountAsync()) > page * pageSize + 1
+                ? page + 1
+                : 0;
 
 
             return View(viewModel);
@@ -85,22 +72,17 @@ namespace Asura.Controllers
             {
                 ext = ext.ToLower();
             }
-            string cacheKey = $"article-{slug}-{ext}-article";
-            string cacheKeyViewModel = $"article-{slug}-{ext}-viewModel";
+           
             var article = new Article();
             
             
             if (ext == "html" || ext == "md")
             {
-                if (!_cache.TryGetValue(cacheKey, out article))
-                {
-                    article = await db.Articles
-                        .Include(p => p.SerieArticle).ThenInclude(se => se.Serie)
-                        .Include(p => p.TagArticles).ThenInclude(se => se.Tag)
-                        .Where(w => (w.IsDraft == false && w.Slug == slug))
-                        .SingleOrDefaultAsync();
-                    _cache.Set(cacheKey, article, _cacheEntryOptions);
-                }
+                article = await db.Articles
+                    .Include(p => p.SerieArticle).ThenInclude(se => se.Serie)
+                    .Include(p => p.TagArticles).ThenInclude(se => se.Tag)
+                    .Where(w => (w.IsDraft == false && w.Slug == slug))
+                    .SingleOrDefaultAsync();
                
             }
 
@@ -115,58 +97,48 @@ namespace Asura.Controllers
                 ViewData["Description"] = $"{article.Desc}，{Config.Blogger.SubTitle}";
                 var viewModel = new ArticleViewModel();
 
-                if (!_cache.TryGetValue(cacheKeyViewModel, out viewModel))
+                List<SerieViewModel> series = new List<SerieViewModel>();
+                foreach (var sa in article.SerieArticle)
                 {
-                    viewModel = new ArticleViewModel();
-                    
-                    List<SerieViewModel> series = new List<SerieViewModel>();
-                    foreach (var sa in article.SerieArticle)
+                    var svm = new SerieViewModel
                     {
-                        var svm = new SerieViewModel
-                        {
-                            Name = sa.Serie.Name,
-                            SerieId = sa.SerieId,
-                            Articles = await db.SerieArticles
-                                .Include(p => p.Article)
-                                .Where(pt => pt.SerieId == sa.SerieId)
-                                .Select(pt => new ArticleSlugViewModel
-                                {
-                                    Slug = pt.Article.Slug,
-                                    Title = pt.Article.Title,
-                                    CreateTime = pt.Article.CreateTime,
-                                })
-                                .ToListAsync()
-                        };
+                        Name = sa.Serie.Name,
+                        SerieId = sa.SerieId,
+                        Articles = await db.SerieArticles
+                            .Include(p => p.Article)
+                            .Where(pt => pt.SerieId == sa.SerieId)
+                            .Select(pt => new ArticleSlugViewModel
+                            {
+                                Slug = pt.Article.Slug,
+                                Title = pt.Article.Title,
+                                CreateTime = pt.Article.CreateTime,
+                            })
+                            .ToListAsync()
+                    };
 
-                        series.Add(svm);
-                    }
-                    viewModel.Series = series;
-                    viewModel.Tags = article.TagArticles.Select(s => s.Tag).ToList();
-
-                    viewModel.Prev = await db.Articles
-                        .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId - 1))
-                        .Select(ar => new ArticleSlugViewModel
-                        {
-                            Slug = ar.Slug,
-                            Title = ar.Title,
-                            CreateTime = ar.CreateTime,
-                        })
-                        .SingleOrDefaultAsync();
-                    viewModel.Next = await db.Articles
-                        .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId + 1))
-                        .Select(ar => new ArticleSlugViewModel
-                        {
-                            Slug = ar.Slug,
-                            Title = ar.Title
-                        })
-                        .SingleOrDefaultAsync();
-                    _cache.Set(cacheKeyViewModel, viewModel, _cacheEntryOptions);
-
+                    series.Add(svm);
                 }
-                
-                
+                viewModel.Series = series;
                 viewModel.Article = article;
-               
+                viewModel.Tags = article.TagArticles.Select(s => s.Tag).ToList();
+
+                viewModel.Prev = await db.Articles
+                    .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId - 1))
+                    .Select(ar => new ArticleSlugViewModel
+                    {
+                        Slug = ar.Slug,
+                        Title = ar.Title,
+                        CreateTime = ar.CreateTime,
+                    })
+                    .SingleOrDefaultAsync();
+                viewModel.Next = await db.Articles
+                    .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId + 1))
+                    .Select(ar => new ArticleSlugViewModel
+                    {
+                        Slug = ar.Slug,
+                        Title = ar.Title
+                    })
+                    .SingleOrDefaultAsync();
 
                 return View(viewModel);
             }
@@ -183,47 +155,35 @@ namespace Asura.Controllers
                 if (ext.ToLower() != "html")
                     return NotFound();
             }
-            string cacheKey = $"Series-{ext}";
-            
             ViewData["Blogger"] = Config.Blogger;
             ViewData["Qiniu"] = Config.QiNiu.Domain;
             ViewData["Title"] = $"专题 | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"专题列表，，{Config.Blogger.SubTitle}";
             ViewData["SeriesSubTitle"] = Config.Blogger.SeriesSubTitle;
-            
-            
             List<SerieViewModel> viewModels = new List<SerieViewModel>();
-
-            if (!_cache.TryGetValue(cacheKey,out viewModels))
+            var series = await db.Series
+                .Include(i => i.SerieArticle)
+                .ToListAsync();
+            foreach (var serie in series)
             {
-                viewModels = new List<SerieViewModel>();
-                
-                var series = await db.Series
-                    .Include(i => i.SerieArticle)
-                    .ToListAsync();
-                foreach (var serie in series)
+                var svm = new SerieViewModel
                 {
-                    var svm = new SerieViewModel
-                    {
-                        Desc = serie.Desc,
-                        Name = serie.Name,
-                        SerieId = serie.SerieId,
-                        Articles = await db.SerieArticles
-                            .Include(p => p.Article)
-                            .Where(pt => pt.SerieId == serie.SerieId)
-                            .Select(pt => new ArticleSlugViewModel
-                            {
-                                Slug = pt.Article.Slug,
-                                Title = pt.Article.Title,
-                                CreateTime = pt.Article.CreateTime,
-                            })
-                            .ToListAsync()
-                    };
-                    viewModels.Add(svm);
-                }
-                _cache.Set(cacheKey, viewModels, _cacheEntryOptions);
+                    Desc = serie.Desc,
+                    Name = serie.Name,
+                    SerieId = serie.SerieId,
+                    Articles = await db.SerieArticles
+                        .Include(p => p.Article)
+                        .Where(pt => pt.SerieId == serie.SerieId)
+                        .Select(pt => new ArticleSlugViewModel
+                        {
+                            Slug = pt.Article.Slug,
+                            Title = pt.Article.Title,
+                            CreateTime = pt.Article.CreateTime,
+                        })
+                        .ToListAsync()
+                };
+                viewModels.Add(svm);
             }
-            
             return View(viewModels);
         }
 
