@@ -27,7 +27,7 @@ namespace Asura.TagHelpers
     [HtmlTargetElement("markdown")]
     public class MarkdownTagHelper : TagHelper
     {
-        public async Task Render<T>(T model, SelfApplicable<T> f)
+        private static async Task Render<T>(T model, SelfApplicable<T> f)
         {
             await f(f, model);
         }
@@ -37,18 +37,18 @@ namespace Asura.TagHelpers
 
 
         [HtmlAttributeName("source")]
-        public ModelExpression Source { get; set; }
+        private ModelExpression Source { get; set; }
 
         /// <summary>
         /// 用于导航的列表
         /// </summary>
-        public List<Headnav> NavList { get; set; }
+        private List<Headnav> NavList { get; set; }
 
         /// <summary>
         /// 生成分级结构
         /// </summary>
         /// <param name="headings"></param>
-        public static List<Headnav> GetNavList(IEnumerable<HeadingBlock> headings)
+        private static List<Headnav> GetNavList(IEnumerable<HeadingBlock> headings)
         {
             var index = 1;
             var list = new List<Headnav>();
@@ -80,7 +80,7 @@ namespace Asura.TagHelpers
         /// <returns></returns>
         public List<Headnav> GetTree()
         {
-            var tops = (from c in NavList where c.Level == 1 select c);
+            var tops = NavList.Where(w=>w.Level == 1).ToList();
             if (!tops.Any()) return null;
             foreach (var top in tops)
             {
@@ -95,14 +95,14 @@ namespace Asura.TagHelpers
         /// </summary>
         /// <param name="parentId"></param>
         /// <returns></returns>
-        public List<Headnav> GetChild(int parentId)
+        private List<Headnav> GetChild(int parentId)
         {
-            var query = from c in NavList where c.ParentId == parentId select c;
+            var query = NavList.Where(w=>w.ParentId == parentId).ToList();
             foreach (var ite in query)
             {
                 ite.Child = GetChild(ite.Id);
             }
-            return query.ToList();
+            return query;
         }
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Asura.Comm
 {
-    public static class MD5Helper
+    public static class Md5Helper
     {
-        public static string MD5Hash(string input)
+        public static string Md5Hash(string input)
         {
             using (var md5 = MD5.Create())
             {

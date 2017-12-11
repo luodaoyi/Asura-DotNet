@@ -35,6 +35,7 @@ namespace Asura
             
             // 增加内存中的缓存
             services.AddMemoryCache();
+            
             //添加MVC
             services.AddMvc();
             // 压缩
@@ -53,11 +54,14 @@ namespace Asura
 //            {
 //                app.UseExceptionHandler("/Home/Error");
 //            }
-            
+            //开发使用的错误页
             app.UseDeveloperExceptionPage();
+            //开发使用的静态文件服务 正式部署建议去掉 使用nginx等直接访问 wwwroot目录
             app.UseStaticFiles();
-            
+            // metawblog 服务
             app.UseMetaWeblog("/api/xmlrpc");
+            //错误页处理
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseMvcWithDefaultRoute();
             //压缩
             app.UseResponseCompression();

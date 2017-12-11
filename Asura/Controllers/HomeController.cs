@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 using Asura.Database;
 using Microsoft.AspNetCore.Mvc;
 using Asura.Models;
 using Asura.Service;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace Asura.Controllers
@@ -182,7 +176,7 @@ namespace Asura.Controllers
             ViewData["Title"] = $"专题 | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"专题列表，，{Config.Blogger.SubTitle}";
             ViewData["SeriesSubTitle"] = Config.Blogger.SeriesSubTitle;
-            List<SerieViewModel> viewModels = new List<SerieViewModel>();
+            var viewModels = new List<SerieViewModel>();
             var series = await db.Series
                 .Include(i => i.SerieArticle)
                 .ToListAsync();
@@ -228,9 +222,8 @@ namespace Asura.Controllers
             ViewData["Title"] = $"归档 | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"博客归档，{Config.Blogger.SubTitle}";
             ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            List<ArchivesViewModel> viewModel = new List<ArchivesViewModel>();
 
-            viewModel = await db.Articles
+            var viewModel = await db.Articles
                 .Where(a => a.IsDraft == false)
                 .GroupBy(c => new
                 {
@@ -251,13 +244,43 @@ namespace Asura.Controllers
                 .OrderByDescending(a=>a.Year)
                 .ThenByDescending(a=>a.Mouth)
                 .ToListAsync();
-
-
             return View(viewModel);
         }
         
         
-
+        /// <summary>
+        /// 404页面
+        /// </summary>
+        /// <returns></returns>
+        [Route("error/404")]
+        public IActionResult Error404()
+        {
+            ViewData["Blogger"] = Config.Blogger;
+            ViewData["Qiniu"] = Config.QiNiu.Domain;
+            ViewData["Description"] = $"迷路了。。，{Config.Blogger.SubTitle}";
+            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
+            
+            return View();
+        }
+        
+        /// <summary>
+        /// 其他错误页面
+        /// </summary>
+        /// <param name="code">错误code</param>
+        /// <returns></returns>
+        [Route("error/{code:int}")]
+        public IActionResult Error(int code)
+        {
+            ViewData["Blogger"] = Config.Blogger;
+            ViewData["Qiniu"] = Config.QiNiu.Domain;
+            ViewData["Title"] = $"{code} | {Config.Blogger.Btitle}";
+            ViewData["Description"] = $"发生错误了，{Config.Blogger.SubTitle}";
+            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
+            
+            // handle different codes or just return the default error view
+            return View();
+        }
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});

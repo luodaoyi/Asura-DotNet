@@ -24,7 +24,7 @@ namespace Asura.Database
                 LoginIp = "127.0.0.1",
                 LoginTime = DateTime.Now,
                 LogoutTime = DateTime.Now,
-                Password = MD5Helper.MD5Hash("admin"),
+                Password = Md5Helper.Md5Hash("admin"),
                 PhoneN = "13888888888",
                 Token = string.Empty
             };

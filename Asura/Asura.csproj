@@ -18,6 +18,7 @@
     <Reference Include="System.Private.CoreLib" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Comm\TagHelper" />
     <Folder Include="wwwroot\lib" />
   </ItemGroup>
 </Project>
