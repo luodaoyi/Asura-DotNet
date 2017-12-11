@@ -108,3 +108,65 @@ dotnet publish -c Release -o Publish --runtime ubuntu.16.04-x64
 - `osx.10.11-x64`
 - `osx.10.12-x64`（.NET Core 1.1 或更高版本）
 - `osx.10.13-x64`
+
+## 部署.net服务
+
+上一步发布的包复制到服务器的目录上
+以下配置请自己替换第一步发布的包锁拷贝的地址
+
+```
+sudo vim /etc/systemd/system/asura-dev.service 
+
+输入以下内容：
+
+
+[Unit]
+Description=我的小博客开发版本
+
+[Service]
+WorkingDirectory=/var/www/asura/Publish
+ExecStart=/var/www/asura/Publish/Asura
+Restart=always
+RestartSec=10
+SyslogIdentifier=dotnet-example
+User=root
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
+
+
+然后启用服务
+
+sudo systemctl enable asura-dev.service
+
+启动：
+sudo systemctl start asura-dev.service
+查看状态：
+sudo systemctl status asura-dev.service
+查看日志
+sudo journalctl -fu asura-dev.service
+```
+
+## 部署反向代理
+
+```
+sudo wget -N --no-check-certificate https://raw.githubusercontent.com/luodaoyi/SimplesScript/master/caddy_install.sh 
+sudo chmod +x caddy_install.sh 
+sudo ./caddy_install.sh install http.authz,http.cache,http.cgi,http.cors,http.expires,http.filemanager,http.filter,http.forwardproxy,http.ipfilter,http.minify,http.nobots,http.proxyprotocol,http.ratelimit,http.realip
+
+完毕后生成反向代理配置:
+
+echo "https://yourdomain {
+ gzip
+ minify
+ tls youemail
+ proxy / http://127.0.0.1:5000
+}" > /usr/local/caddy/Caddyfile
+
+
+然后重启caddy
+
+sudo service caddy restart
+```
