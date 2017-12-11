@@ -191,5 +191,9 @@ namespace Asura.Service
         /// 归档页子标题内容
         /// </summary>
         public string SeriesSubTitle { get; set; }
+        /// <summary>
+        /// 缓存过期时间
+        /// </summary>
+        public int CacheExpireSecont { get; set; }
     }
 }

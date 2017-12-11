@@ -28,33 +28,56 @@
         </div>
         <h1 class=title itemprop=headline>@Model.Article.Title</h1>
         <div class="entry-content" itemprop=articleBody>
-            <markdown text="@Model.Article.Header"/>
-            <markdown text="@Model.Article.Content"/>
             
+            @if (!string.IsNullOrEmpty(@Model.Article.Header))
+            {
+                <markdown text="@Model.Article.Header"/>
+            }
+            
+            <nav id="toc"><p><strong>预览目录</strong></p>
+                <ul>
+                    
+                    <li>
+                        <a href="#toc_0">volume 方式</a>
+                        <ul>
+                            <li><a href="#toc_1">相关用例</a></li>
+                            <li><a href="#toc_2">使用方式</a></li>
+                            <li><a href="#toc_3">使用 volume driver</a></li>
+                        </ul>
+                    </li>
+
+
+                    @*                    <markdownnav text="@Model.Article.Content"/>*@
+                </ul>
+            </nav>
+            
+            <markdown text="@Model.Article.Content"/>
+
             <p>本文链接：
                 <a rel="bookmark" title="Permalink to @ViewData["Title"]" href="//@blogger.Domain/p/@(Model.Article.Slug).html" itemprop="url">https://@blogger.Domain/p/@(Model.Article.Slug).html</a>，
                 <a href="//@blogger.Domain/p/@(Model.Article.Slug).html#comments">参与评论 »</a>
             </p>
-            <p>--<acronym title="End of File">EOF</acronym>--</p>
+            <p>--<acronym title="End of File">EOF</acronym>--
+            </p>
             <p class="post-info">发表于
                 <span class="date">@(Model.Article.CreateTime.ToString("D"))</span>
-                @if (Model.Tags.Count>0)
+                @if (Model.Tags.Count > 0)
                 {
-                    <span>并被添加「 
+                    <span>并被添加「
                         @foreach (var tag in Model.Tags)
                         {
                             <a href="/tag/@(tag.TagName)"> @tag.TagName 、</a>
                         }
                         」标签</span>
                 }
-                @if ((Model.Article.UpdateTime - Model.Article.CreateTime).Days>1)
+                @if ((Model.Article.UpdateTime - Model.Article.CreateTime).Days > 1)
                 {
                     <span>最后修改于
                         <span class="date">@Model.Article.UpdateTime.ToString("D")</span>
                     </span>
                 }
             </p>
-            
+
             <p class="copyright-info">
                 @Html.Raw(blogger.CopyRight)
                 <a href="//@blogger.Domain/p/about.html#toc_1">更多说明 »</a>
@@ -63,7 +86,7 @@
             {
                 <p class="expire-tips">提醒：本文最后更新于 @days 天前，文中所描述的信息可能已发生改变，请谨慎使用。</p>
             }
-            
+
             @if (Model.Series.Count > 0)
             {
                 foreach (var serie in Model.Series)
@@ -78,7 +101,7 @@
                                 <li>
                                     <a href="/p/@(serieArticle.Slug).html">@(serieArticle.Title)</a>
                                     <span class="date">(@(serieArticle.CreateTime.ToShortDateString()))</span>
-                                </li> 
+                                </li>
                             }
                         </ul>
                     </div>

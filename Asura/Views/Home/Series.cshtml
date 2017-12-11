@@ -8,6 +8,19 @@
     <article class="post post-series">
         <h1 class=title>专题</h1>
         <div class="entry-content">
+            <div id="toc-container">
+                <nav id="toc">
+                    <p><strong>预览目录</strong>
+                    </p>
+                    <ul>
+                        @foreach (var serie in Model)
+                        {
+                            <li><a href="#toc-@(serie.SerieId)">@serie.Name</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+            
             <p>@ViewData["SeriesSubTitle"]</p>
 
             @foreach (var serie in Model)

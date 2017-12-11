@@ -14,9 +14,10 @@
       "wwwroot/js/jquery-3.2.1.js",
       "wwwroot/js/site.js",
       "wwwroot/js/ana.js",
-      "wwwroot/js/blog.js",
-      "wwwroot/js/highlight.js"
+      "wwwroot/js/blog.js"
+      
     ],
+    //"wwwroot/js/highlight.js"
     // Optionally specify minification options
     "minify": {
       "enabled": true,

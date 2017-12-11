@@ -32,10 +32,14 @@ namespace Asura
             //添加options
             services.AddOptions();
             services.Configure<SiteConfig>(Configuration.GetSection("SiteConfig"));
-
+            
+            // 增加内存中的缓存
+            services.AddMemoryCache();
             //添加MVC
             services.AddMvc();
-            
+            // 压缩
+            services.AddResponseCompression();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,15 +58,11 @@ namespace Asura
             app.UseStaticFiles();
             
             app.UseMetaWeblog("/api/xmlrpc");
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}"
-                );
-            });
-            
-            
+            app.UseMvcWithDefaultRoute();
+            //压缩
+            app.UseResponseCompression();
+
+
         }
     }
 }
