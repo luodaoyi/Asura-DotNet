@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Markdig;
 using Markdig.Extensions.AutoIdentifiers;
@@ -11,33 +9,46 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Asura.TagHelpers
 {
-    public delegate void SelfApplicable<T>(SelfApplicable<T> self, T arg);
+    //public delegate void SelfApplicable<T>(SelfApplicable<T> self, T arg);
+    public delegate Task SelfApplicable<T>(SelfApplicable<T> self, T arg);
 
+    public class Headnav
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int ParentId { get; set; }
+        public int Level { get; set; }
+        public List<Headnav> Child { get; set; }
+    }
+    
     [HtmlTargetElement("markdown")]
     public class MarkdownTagHelper : TagHelper
     {
-        public static void Render<T>(T model, SelfApplicable<T> f)
+        public async Task Render<T>(T model, SelfApplicable<T> f)
         {
-            f(f, model);
+            await f(f, model);
         }
 
         [HtmlAttributeName("text")]
         public string Text { get; set; }
 
+
         [HtmlAttributeName("source")]
         public ModelExpression Source { get; set; }
 
+        /// <summary>
+        /// 用于导航的列表
+        /// </summary>
         public List<Headnav> NavList { get; set; }
 
         /// <summary>
         /// 生成分级结构
         /// </summary>
         /// <param name="headings"></param>
-        public List<Headnav> GetNavList(List<HeadingBlock> headings)
+        public static List<Headnav> GetNavList(IEnumerable<HeadingBlock> headings)
         {
             var index = 1;
             var list = new List<Headnav>();
@@ -75,18 +86,18 @@ namespace Asura.TagHelpers
             {
                 top.Child = GetChild(top.Id);
             }
-            
+
             return tops.ToList();
         }
 
         /// <summary>
         /// 获取子列表
         /// </summary>
-        /// <param name="p_id"></param>
+        /// <param name="parentId"></param>
         /// <returns></returns>
-        public List<Headnav> GetChild(int p_id)
+        public List<Headnav> GetChild(int parentId)
         {
-            var query = from c in NavList where c.ParentId == p_id select c;
+            var query = from c in NavList where c.ParentId == parentId select c;
             foreach (var ite in query)
             {
                 ite.Child = GetChild(ite.Id);
@@ -94,7 +105,7 @@ namespace Asura.TagHelpers
             return query.ToList();
         }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (Source != null)
             {
@@ -102,9 +113,9 @@ namespace Asura.TagHelpers
             }
             //组装markdown 解析处理管道
             var pipeline = new MarkdownPipelineBuilder()
-                .UseNoFollowLinks()
-                .UseMediaLinks()
-                .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+                .UseNoFollowLinks() //连接加nofollow
+                .UseMediaLinks() //媒体连接
+                .UseAutoIdentifiers(AutoIdentifierOptions.GitHub) //使用github式的header解析
                 .Build();
             var doc = Markdown.Parse(Text, pipeline);
 
@@ -124,24 +135,24 @@ namespace Asura.TagHelpers
                 //http://blog.zhaojie.me/2009/09/rendering-tree-like-structure-recursively.html
                 if (headnav != null && headnav.Count > 0)
                 {
-                    writer.Write("<nav id='toc'><p><strong>预览目录</strong></p>");
+                    await writer.WriteAsync("<nav id='toc'><p><strong>预览目录</strong></p>");
 
-                    Render(headnav, (render, navs) =>
+                    await Render(headnav, async (render, navs) =>
                     {
                         if (navs.Count > 0)
                         {
-                            writer.Write("<ul>");
+                            await writer.WriteAsync("<ul>");
                             foreach (var nav in navs)
                             {
-                                writer.Write("<li>");
-                                writer.Write($"<a href='#{nav.Name}'>{nav.Name}</a>");
-                                render(render, nav.Child);
-                                writer.Write(" </li>");
+                                await writer.WriteAsync("<li>");
+                                await writer.WriteAsync($"<a href='#{nav.Name}'>{nav.Name}</a>");
+                                await render(render, nav.Child);
+                                await writer.WriteAsync(" </li>");
                             }
-                            writer.Write("</ul>");
+                            await writer.WriteAsync("</ul>");
                         }
                     });
-                    writer.Write("</nav>");
+                    await writer.WriteAsync("</nav>");
                 }
 
                 var htmlWriter = new HtmlRenderer(writer) {EnableHtmlForInline = true};
@@ -151,38 +162,6 @@ namespace Asura.TagHelpers
             }
             output.TagName = "div";
 
-            output.TagMode = TagMode.StartTagAndEndTag;
-        }
-    }
-
-    public class Headnav
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int ParentId { get; set; }
-        public int Level { get; set; }
-        public List<Headnav> Child { get; set; }
-    }
-
-    [HtmlTargetElement("markplain")]
-    public class String2HtmlTagHelper : TagHelper
-    {
-        [HtmlAttributeName("text")]
-        public string Text { get; set; }
-
-        [HtmlAttributeName("source")]
-        public ModelExpression Source { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            if (Source != null)
-            {
-                Text = Source.Model.ToString();
-            }
-
-            var result = Markdown.ToPlainText(Text);
-            output.TagName = "p";
-            output.Content.SetHtmlContent(result);
             output.TagMode = TagMode.StartTagAndEndTag;
         }
     }

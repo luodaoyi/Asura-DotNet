@@ -102,7 +102,7 @@ namespace Asura.Controllers
             if (ext == "md")
             {
                 var footer =
-                    $"原文链接：[https://{Config.Blogger.Domain}/p/{slug}.html](https://{Config.Blogger.Domain}/p/{slug}.html)，[前往原文评论 »](https://{Config.Blogger.Domain}/p/{slug}.html#comments)";
+                    $"\n 原文链接：[https://{Config.Blogger.Domain}/p/{slug}.html](https://{Config.Blogger.Domain}/p/{slug}.html)，[前往原文评论 »](https://{Config.Blogger.Domain}/p/{slug}.html#comments)";
                 return Content(article.Content + footer);
             }
             // 请求html页面
@@ -255,6 +255,8 @@ namespace Asura.Controllers
 
             return View(viewModel);
         }
+        
+        
 
         public IActionResult Error()
         {
