@@ -69,12 +69,15 @@ namespace Asura.Database
                 context.Tags.Add(tag1);
                 
                 context.SaveChanges();
+
+                var content = string.Empty;
+                
                 var article = new Article()
                 {
                     Title = $"Hello World -【{i}】",
                     Slug = $"hello-world{i}",
                     Author = "luodaoyi",
-                    Content = "# Hello World \n ## 你好世界！\n 如果你看到这条信息说明就好了",
+                    Content = "# Hello World \n ## 你好世界！\n 如果你看到这条信息说明就好了 \n ## 我是个子标题  \n 粉色发色染色 ##我是子标题的子标题 \n ## 粉色色粉色粉哇安慰",
                     Count = 10,
                     CreateTime = DateTime.Now,
                     DeleteTime = DateTime.Now,

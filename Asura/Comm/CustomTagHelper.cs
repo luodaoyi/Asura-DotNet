@@ -62,17 +62,23 @@ namespace Asura.TagHelpers
             }
             return list;
         }
+
         /// <summary>
         /// 获取树状结构
         /// </summary>
         /// <returns></returns>
-        public Headnav GetTree()
+        public List<Headnav> GetTree()
         {
-            var top = (from c in NavList where c.Level == 1 select c).SingleOrDefault();
-            if (top == null) return null;
-            top.Child = GetChild(top.Id);
-            return top;
+            var tops = (from c in NavList where c.Level == 1 select c);
+            if (!tops.Any()) return null;
+            foreach (var top in tops)
+            {
+                top.Child = GetChild(top.Id);
+            }
+            
+            return tops.ToList();
         }
+
         /// <summary>
         /// 获取子列表
         /// </summary>
@@ -110,16 +116,17 @@ namespace Asura.TagHelpers
             //生成树状结构 感谢csdn
             // http://bbs.csdn.net/topics/390112767
             var headnav = GetTree();
-            
+
+
             using (var writer = new StringWriter())
             {
                 //当树状结构元素大于1的时候 生成html 感谢赵姐夫：
                 //http://blog.zhaojie.me/2009/09/rendering-tree-like-structure-recursively.html
-                if (headnav.Child.Count > 1)
+                if (headnav != null && headnav.Count > 0)
                 {
                     writer.Write("<nav id='toc'><p><strong>预览目录</strong></p>");
 
-                    Render(headnav.Child, (render, navs) =>
+                    Render(headnav, (render, navs) =>
                     {
                         if (navs.Count > 0)
                         {
@@ -129,21 +136,21 @@ namespace Asura.TagHelpers
                                 writer.Write("<li>");
                                 writer.Write($"<a href='#{nav.Name}'>{nav.Name}</a>");
                                 render(render, nav.Child);
-                                writer.Write( " </li>");
+                                writer.Write(" </li>");
                             }
                             writer.Write("</ul>");
                         }
                     });
                     writer.Write("</nav>");
                 }
-                
+
                 var htmlWriter = new HtmlRenderer(writer) {EnableHtmlForInline = true};
                 htmlWriter.Render((MarkdownObject) doc);
-                
+
                 output.Content.SetHtmlContent(writer.ToString());
             }
             output.TagName = "div";
-           
+
             output.TagMode = TagMode.StartTagAndEndTag;
         }
     }
