@@ -1,13 +1,12 @@
-﻿@model List<Asura.Models.SerieViewModel>
+﻿@model List<Asura.Models.ArchivesViewModel>
 
 @{
     Layout = "_Layout";
-    ViewData["CurrentPage"] = "series";
 }
 
 <div id=content class=inner>
     <article class="post post-series">
-        <h1 class=title>专题</h1>
+        <h1 class=title>归档</h1>
         <div class="entry-content">
             <div id="toc-container">
                 <nav id="toc">
@@ -16,18 +15,17 @@
                     <ul>
                         @foreach (var serie in Model)
                         {
-                            <li><a href="#toc-@(serie.SerieId)">@serie.Name</a></li>
+                            <li><a href="#toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</a></li>
                         }
                     </ul>
                 </nav>
             </div>
             
-            <p>@ViewData["SeriesSubTitle"]</p>
+            <p>@ViewData["ArchiveSubTitle"]</p>
 
             @foreach (var serie in Model)
             {
-                <h3 id="toc-@(serie.SerieId)">@serie.Name</h3>
-                <p>@serie.Desc</p>
+                <h3 id="toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</h3>
                 <ul>
                     @foreach (var article in serie.Articles)
                     {

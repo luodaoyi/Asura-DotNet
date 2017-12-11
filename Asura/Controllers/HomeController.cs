@@ -28,6 +28,12 @@ namespace Asura.Controllers
             db = context;
         }
 
+        /// <summary>
+        /// 首页 、 列表页
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="ext"></param>
+        /// <returns></returns>
         [Route("")]
         [Route("index")]
         [Route("page/{page}")]
@@ -64,6 +70,12 @@ namespace Asura.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        /// 文章页
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <param name="ext"></param>
+        /// <returns></returns>
         [Route("p/{slug}")]
         [Route("p/{slug}.{ext}")]
         public async Task<IActionResult> Article(string slug, string ext = "html")
@@ -72,10 +84,10 @@ namespace Asura.Controllers
             {
                 ext = ext.ToLower();
             }
-           
+
             var article = new Article();
-            
-            
+
+
             if (ext == "html" || ext == "md")
             {
                 article = await db.Articles
@@ -83,11 +95,16 @@ namespace Asura.Controllers
                     .Include(p => p.TagArticles).ThenInclude(se => se.Tag)
                     .Where(w => (w.IsDraft == false && w.Slug == slug))
                     .SingleOrDefaultAsync();
-               
             }
 
             if (article == null) return NotFound();
 
+            if (ext == "md")
+            {
+                var footer =
+                    $"原文链接：[https://{Config.Blogger.Domain}/p/{slug}.html](https://{Config.Blogger.Domain}/p/{slug}.html)，[前往原文评论 »](https://{Config.Blogger.Domain}/p/{slug}.html#comments)";
+                return Content(article.Content + footer);
+            }
             // 请求html页面
             if (ext == "html")
             {
@@ -146,6 +163,11 @@ namespace Asura.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// 专题页
+        /// </summary>
+        /// <param name="ext">url 扩展类型 </param>
+        /// <returns></returns>
         [Route("series")]
         [Route("series.{ext}")]
         public async Task<IActionResult> Series(string ext = "html")
@@ -187,6 +209,52 @@ namespace Asura.Controllers
             return View(viewModels);
         }
 
+        /// <summary>
+        /// 归档页
+        /// </summary>
+        /// <param name="ext"></param>
+        /// <returns></returns>
+        [Route("archives")]
+        [Route("archives.{ext}")]
+        public async Task<IActionResult> Archives(string ext = "html")
+        {
+            if (!string.IsNullOrEmpty(ext))
+            {
+                if (ext.ToLower() != "html")
+                    return NotFound();
+            }
+            ViewData["Blogger"] = Config.Blogger;
+            ViewData["Qiniu"] = Config.QiNiu.Domain;
+            ViewData["Title"] = $"归档 | {Config.Blogger.Btitle}";
+            ViewData["Description"] = $"博客归档，{Config.Blogger.SubTitle}";
+            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
+            List<ArchivesViewModel> viewModel = new List<ArchivesViewModel>();
+
+            viewModel = await db.Articles
+                .Where(a => a.IsDraft == false)
+                .GroupBy(c => new
+                {
+                    Year = c.CreateTime.Year,
+                    Month = c.CreateTime.Month
+                })
+                .Select(c => new ArchivesViewModel
+                {
+                    Mouth = c.Key.Month,
+                    Year = c.Key.Year,
+                    Articles = c.Select(avm=>new ArticleSlugViewModel
+                    {
+                        Slug = avm.Slug,
+                        Title = avm.Title,
+                        CreateTime = avm.CreateTime
+                    }).ToList()
+                })
+                .OrderByDescending(a=>a.Year)
+                .ThenByDescending(a=>a.Mouth)
+                .ToListAsync();
+
+
+            return View(viewModel);
+        }
 
         public IActionResult Error()
         {

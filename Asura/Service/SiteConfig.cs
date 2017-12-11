@@ -188,9 +188,13 @@ namespace Asura.Service
         /// </summary>
         public string Avatar { get; set; }
         /// <summary>
-        /// 归档页子标题内容
+        /// 主题页子标题内容
         /// </summary>
         public string SeriesSubTitle { get; set; }
+        /// <summary>
+        /// 归档页子标题内容
+        /// </summary>
+        public string ArchiveSubTitle { get; set; }
         /// <summary>
         /// 缓存过期时间
         /// </summary>

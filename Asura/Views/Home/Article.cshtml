@@ -3,6 +3,7 @@
 
 @{
     Layout = "_Layout";
+    ViewData["CurrentPage"] = $"post-{Model.Article.Slug}";
     var blogger = new Blogger();
     if (ViewData["Blogger"] != null)
     {
@@ -76,6 +77,7 @@
                         <span class="date">@Model.Article.UpdateTime.ToString("D")</span>
                     </span>
                 }
+                <a href="https://@blogger.Domain/p/@(Model.Article.Slug).md">查看本文 Markdown 版本 »</a>
             </p>
 
             <p class="copyright-info">
