@@ -1,3 +1,5 @@
+echo "scp太慢干掉的时候要先删除"
+rm -rf ~/RiderProjects/Asura/Asura/Publish/
 echo "ssh 到服务器上停止服务！"
 ssh jd "systemctl stop asura-dev;exit"
 echo "进入项目目录准备编译发布"
