@@ -32,7 +32,7 @@ namespace Asura.Service
         /// <summary>
         /// 评论相关
         /// </summary>
-        public Disqus Disqus { get; set; }
+        public DisqusConfig Disqus { get; set; }
 
         /// <summary>
         /// google analytice
@@ -94,7 +94,7 @@ namespace Asura.Service
     /// <summary>
     /// 评论相关
     /// </summary>
-    public class Disqus
+    public class DisqusConfig
     {
         public string Shortname { get; set; }
         public string Publickey { get; set; }

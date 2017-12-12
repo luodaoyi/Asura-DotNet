@@ -25,17 +25,18 @@ namespace Asura
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMetaWeblog<AsuraMetaWeblogService>();
-            services.AddDbContext<AsuraContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             
-            //添加options
+            
+            services.AddDbContext<AsuraContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));          
+            
+            //添加配置options
             services.AddOptions();
             services.Configure<SiteConfig>(Configuration.GetSection("SiteConfig"));
-            
+            //增加weblog服务
+            services.AddMetaWeblog<AsuraMetaWeblogService>();
             // 增加内存中的缓存
             services.AddMemoryCache();
-            
             //添加MVC
             services.AddMvc();
             // 压缩
@@ -62,6 +63,7 @@ namespace Asura
             app.UseMetaWeblog("/api/xmlrpc");
             //错误页处理
             app.UseStatusCodePagesWithReExecute("/error/{0}");
+            //使用mvc并且配置默认的路由
             app.UseMvcWithDefaultRoute();
             //压缩
             app.UseResponseCompression();
