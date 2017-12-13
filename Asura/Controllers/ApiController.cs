@@ -26,6 +26,7 @@ namespace Asura.Controllers
         {
             this.Config = option.Value;
             this.db = context;
+            //将服务器上的disqus.com host指向 23.235.33.134 就不用使用代理了
             //Disqus.NET.DisqusEndpoints.SetProxy(this.Config.Disqus.ApiDomain);
             this.DisqusApi = new DisqusApi(DisqusAuthMethod.PublicKey, this.Config.Disqus.Publickey);
         }
@@ -92,7 +93,7 @@ namespace Asura.Controllers
                     Name = detail.Author.Name,
                     Parent = detail.Parent.Id,
                     Url = detail.Author.ProfileUrl,
-                    Avatar = detail.Author.Username,
+                    Avatar = detail.Author.Name,
                     CreatedAtStr = CommHelper.ConvertStr(detail.CreatedAt),
                     Message = detail.Message,
                     IsDeleted = detail.IsDeleted
