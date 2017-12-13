@@ -14,8 +14,26 @@ DEMO: [https://dev.luodaoyi.com](https://dev.luodaoyi.com)
 ## 开发调试
 
 ```
+dotnet restore
 dotnet watch run
 ```
+
+## 数据库迁移
+
+在编译发布前 必须生成数据库迁移代码，才可以自动生成数据库
+
+```
+dotnet restore
+dotnet ef migrations add InitialCreate
+这个时候已经可以发布部署了 服务端会自动生成
+
+手动生成sqlite数据库文件:
+dotnet ef database update
+此时就会在项目目录下自动生成数据库了
+
+```
+
+
 
 ## 发布部署
 
