@@ -1,9 +1,6 @@
 ﻿@model Asura.Models.ArticleViewModel
-@using Asura.Service
-
 @{
     Layout = "_Layout";
-   
     var days = (Model.Article.UpdateTime - DateTime.Now).Days;
 }
 

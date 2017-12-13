@@ -127,8 +127,6 @@ namespace Asura.TagHelpers
             //生成树状结构 感谢csdn
             // http://bbs.csdn.net/topics/390112767
             var headnav = GetTree();
-
-
             using (var writer = new StringWriter())
             {
                 //当树状结构元素大于1的时候 生成html 感谢赵姐夫：

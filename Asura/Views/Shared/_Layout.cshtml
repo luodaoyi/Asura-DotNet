@@ -96,10 +96,12 @@
 </div>
 
 <input type=hidden id=CURRENT_PAGE value="@(viewModel.CurrentPage)">
-<input type=hidden id=CDN_DOMAIN value="//@(viewModel.SiteConfig.QiNiu.Domain)">
+<input type=hidden id=CDN_DOMAIN value="https://@(viewModel.SiteConfig.QiNiu.Domain)">
 
 <environment names="Development">
+    <script type="text/javascript" src="~/js/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="~/js/site.js"></script>
+    <script type="text/javascript" src="~/js/blog.js"></script>
 </environment>
 <environment names="Staging,Production">
     <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>

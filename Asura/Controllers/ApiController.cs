@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Asura.Comm;
@@ -9,6 +11,7 @@ using Disqus.NET;
 using Disqus.NET.Requests;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Asura.Controllers
@@ -23,8 +26,8 @@ namespace Asura.Controllers
         {
             this.Config = option.Value;
             this.db = context;
-            Disqus.NET.DisqusEndpoints.SetProxy(this.Config.Disqus.ApiDomain);
-            this.DisqusApi=new DisqusApi(DisqusAuthMethod.PublicKey,this.Config.Disqus.Publickey);
+            //Disqus.NET.DisqusEndpoints.SetProxy(this.Config.Disqus.ApiDomain);
+            this.DisqusApi = new DisqusApi(DisqusAuthMethod.PublicKey, this.Config.Disqus.Publickey);
         }
 
         [Route("disqus/post-{slug}")]
@@ -35,24 +38,44 @@ namespace Asura.Controllers
             var cursor = HttpContext.Request.Query["cursor"].ToString();
 
             var request = DisqusThreadListPostsRequest
-                .New(DisqusThreadLookupType.Identifier,$"post-{slug}")
+                .New(DisqusThreadLookupType.Identifier, $"post-{slug}")
                 .Cursor(cursor)
                 .Forum(Config.Disqus.Shortname)
                 .Limit(50);
 
-            CursoredDisqusResponse<IEnumerable<Disqus.NET.Models.DisqusPost>>  response = null; 
+            CursoredDisqusResponse<IEnumerable<Disqus.NET.Models.DisqusPost>> response = null;
             try
             {
-                response = await DisqusApi.Threads.ListPostsAsync(request).ConfigureAwait(false);
-
+                response = await DisqusApi.Threads.ListPostsAsync(request);
             }
             catch (DisqusApiException ex)
             {
-                dcs.ErrNo = 1;
+                dcs.ErrNo = (int)ex.Code;
                 dcs.ErrMsg = ex.Error;
+
+                if (ex.Code == DisqusApiResponseCode.MissingOrInvalidArgument)
+                {
+                    var article = await db.Articles.Where(w => (w.Slug == slug) && !w.IsDraft)
+                        .SingleOrDefaultAsync();
+                    if (article == null) return Json(dcs);
+                    var createReques = DisqusThreadCreateRequest
+                        .New(Config.Disqus.Shortname, article.Title)
+                        .Identifier($"post-{slug}");
+
+                    var rep = await DisqusApi.Threads.CreateAsync(DisqusAccessToken.Create(Config.Disqus.Accesstoken), createReques);
+                    return Json(rep);
+                }
+
                 return Json(dcs);
             }
+            if(null == response)
+            {
+                dcs.ErrNo = 1;
+                dcs.ErrMsg = "调用disqus接口失败!";
+            }
+
             dcs.ErrNo = (int)response.Code;
+            dcs.Data = new DisqusCommentsData();
             if (response.Cursor != null)
             {
                 dcs.Data.Next = response.Cursor.Next;

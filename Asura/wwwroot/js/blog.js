@@ -136,7 +136,7 @@ stringProto.stripTags = function () {
                     var e = this;
                     t.disqus_config = function () {
                         this.page.url = e.url, this.page.identifier = e.identifier
-                    }, $.ajax({url: t.CDN_DOMAIN + "embed.js", dataType: "script", cache: !0})
+                    }, $.ajax({url: t.CDN_DOMAIN + "//devluodaoyi/embed.js", dataType: "script", cache: !0})
                 }
             }, init: function (t, a, e) {
                 t.html("评论完整模式加载中...<br /><br />注：如果长时间无法加载，请针对 disq.us | disquscdn.com | disqus.com 启用代理。"), this.elThread = t, this.url = a, this.identifier = e

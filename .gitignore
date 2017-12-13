@@ -1,0 +1,15 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.idea/.idea.Asura
+/.vs
+/Asura/.vscode
+/Asura/bin
+/Asura/obj
+/Asura/Migrations
+/Asura/Properties
+*.DS_Store
+*.sqlite
+/Asura/Asura.csproj.user
+/Asura.userprefs
