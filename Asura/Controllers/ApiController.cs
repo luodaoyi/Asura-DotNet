@@ -27,15 +27,15 @@ namespace Asura.Controllers
             this.DisqusApi=new DisqusApi(DisqusAuthMethod.PublicKey,this.Config.Disqus.Publickey);
         }
 
-        [Route("disqus/{slug}")]
-        [Route("disqus/{slug}.{ext}")]
+        [Route("disqus/post-{slug}")]
+        [Route("disqus/post-{slug}.{ext}")]
         public async Task<IActionResult> DisqusPosts(string slug, string ext = "html")
         {
             var dcs = new DisqusComments();
             var cursor = HttpContext.Request.Query["cursor"].ToString();
 
             var request = DisqusThreadListPostsRequest
-                .New(DisqusThreadLookupType.Identifier,slug)
+                .New(DisqusThreadLookupType.Identifier,$"post-{slug}")
                 .Cursor(cursor)
                 .Forum(Config.Disqus.Shortname)
                 .Limit(50);

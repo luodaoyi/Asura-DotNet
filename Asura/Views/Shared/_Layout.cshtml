@@ -1,11 +1,5 @@
-﻿@using Asura.Service
-@{
-    var blogger = new Blogger();
-    if (ViewData["Blogger"] != null)
-    {
-        blogger = ViewData["Blogger"] as Blogger;
-    } 
-    
+﻿@{
+    var viewModel = Model as Asura.Models.VewModelBase;
 }
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -15,22 +9,22 @@
     <meta name="format-detection" content="telephone=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="always">
-    <title>@ViewData["Title"]</title>
-    <link rel="apple-touch-icon" href="//@ViewData["Qiniu"]/static/img/favicon.ico">
-    <link rel="search" type="application/opensearchdescription+xml" href="//@blogger.Domain/opensearch.xml" title="@blogger.Btitle">
+    <title>@viewModel.Title</title>
+    <link rel="apple-touch-icon" href="//@viewModel.SiteConfig.QiNiu.Domain/static/img/favicon.ico">
+    <link rel="search" type="application/opensearchdescription+xml" href="//@viewModel.SiteConfig.Blogger.Domain/opensearch.xml" title="@viewModel.SiteConfig.Blogger.Btitle">
 
     <link rel="stylesheet" href="~/css/site.min.css">
 
     <script type="text/javascript">
-        disqusShortName = "@(ViewData["disqusShortName"])";
-        QiniuDomain = "@ViewData["Qiniu"]";
-        WebSiteDomain = "@blogger.Domain";
+        disqusShortName = "@(viewModel.SiteConfig.Disqus.Shortname)";
+        QiniuDomain = "@viewModel.SiteConfig.QiNiu.Domain";
+        WebSiteDomain = "@viewModel.SiteConfig.Blogger.Domain";
     </script>
 
     @RenderSection("headjs", false)
 
-    <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@ViewData["Domain"]/rss.html">
-    <meta name="description" content="@ViewData["Description"]">
+    <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@viewModel.SiteConfig.Blogger.Domain/rss.html">
+    <meta name="description" content="@viewModel.Description">
 </head>
 <body>
 
@@ -42,9 +36,9 @@
                     <a href="/"></a>
                 </div>
                 <h1>
-                    <a href="/">@blogger.BlogName</a>
+                    <a href="/">@viewModel.SiteConfig.Blogger.BlogName</a>
                 </h1>
-                <p class="subtitle">@blogger.SubTitle</p>
+                <p class="subtitle">@viewModel.SiteConfig.Blogger.SubTitle</p>
                 <nav id="main-nav">
                     <ul>
                         <li>
@@ -76,7 +70,7 @@
                 </nav>
                 <nav id="sub-nav">
                     <div class="social">
-                        <a target="_blank" class="rss" href="//@blogger.Domain/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
+                        <a target="_blank" class="rss" href="//@viewModel.SiteConfig.Blogger.Domain/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
                         <a class="search" href="/search.html" title="站内搜索" aria-label="站内搜索">Search</a>
                     </div>
                 </nav>
@@ -86,8 +80,8 @@
     <div class="mid-col">
         <div class="mid-col-container">@RenderBody()</div>
         <footer id=footer class=inner>
-            © @DateTime.Now.Year - @blogger.Btitle -
-            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@blogger.Beian</a>
+            © @DateTime.Now.Year - @viewModel.SiteConfig.Blogger.Btitle -
+            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@viewModel.SiteConfig.Blogger.Beian</a>
             <br>Powered by
             <a target=_blank href="//github.com/luodaoyi/asura">Asura</a> &
             <a target=_blank href="//github.com/eiblog/eiblog">Eiblog</a> &

@@ -42,14 +42,14 @@ namespace Asura.Controllers
 
             page = page <= 0 ? 1 : page;
 
-            ViewData["Blogger"] = Config.Blogger;
-            ViewData["Qiniu"] = Config.QiNiu.Domain;
-            ViewData["Title"] = $"{Config.Blogger.Btitle} | {Config.Blogger.SubTitle}";
-            ViewData["Description"] = $"博客首页，{Config.Blogger.SubTitle}";
-            ViewData["disqusShortName"] = Config.Disqus.Shortname;
-            
             var pageSize = 10;
             var viewModel = new HomeViewModel();
+
+            viewModel.SiteConfig = Config;
+            viewModel.Description = $"博客首页，{Config.Blogger.SubTitle}";
+            viewModel.Title = $"{Config.Blogger.Btitle} | {Config.Blogger.SubTitle}";
+            viewModel.CurrentPage = "blog-home";
+
             var startRow = (page - 1) * pageSize;
             var query = await db.Articles.Where(w => w.IsDraft == false).OrderByDescending(p => p.CreateTime)
                 .Skip(startRow)
@@ -103,17 +103,18 @@ namespace Asura.Controllers
             // 请求html页面
             if (ext == "html")
             {
-                ViewData["Title"] = $"{article.Title} | {Config.Blogger.Btitle}";
-                ViewData["Blogger"] = Config.Blogger;
-                ViewData["Qiniu"] = Config.QiNiu.Domain;
-                ViewData["Description"] = $"{article.Desc}，{Config.Blogger.SubTitle}";
-                ViewData["disqusShortName"] = Config.Disqus.Shortname;
+
                 var viewModel = new ArticleViewModel();
 
-                List<SerieViewModel> series = new List<SerieViewModel>();
+                viewModel.SiteConfig = Config;
+                viewModel.Description = $"{article.Desc}，{Config.Blogger.SubTitle}";
+                viewModel.Title = $"{article.Title} | {Config.Blogger.Btitle}";
+                viewModel.CurrentPage = $"post-{slug}";
+
+                List<SerieViewModelBase> series = new List<SerieViewModelBase>();
                 foreach (var sa in article.SerieArticle)
                 {
-                    var svm = new SerieViewModel
+                    var svm = new SerieViewModelBase
                     {
                         Name = sa.Serie.Name,
                         SerieId = sa.SerieId,
@@ -173,19 +174,22 @@ namespace Asura.Controllers
                 if (ext.ToLower() != "html")
                     return NotFound();
             }
-            ViewData["Blogger"] = Config.Blogger;
-            ViewData["Qiniu"] = Config.QiNiu.Domain;
-            ViewData["Title"] = $"专题 | {Config.Blogger.Btitle}";
-            ViewData["Description"] = $"专题列表，，{Config.Blogger.SubTitle}";
-            ViewData["SeriesSubTitle"] = Config.Blogger.SeriesSubTitle;
-            ViewData["disqusShortName"] = Config.Disqus.Shortname;
-            var viewModels = new List<SerieViewModel>();
+
+            var viewModels = new SerieViewModel();
+            viewModels.List = new List<SerieViewModelBase>();
+            viewModels.SiteConfig = Config;
+            viewModels.Description = $"专题列表，，{Config.Blogger.SubTitle}";
+            viewModels.Title = $"专题 | {Config.Blogger.Btitle}";
+            viewModels.CurrentPage = $"post-series";
+            viewModels.SeriesSubTitle = Config.Blogger.SeriesSubTitle;
+
+
             var series = await db.Series
                 .Include(i => i.SerieArticle)
                 .ToListAsync();
             foreach (var serie in series)
             {
-                var svm = new SerieViewModel
+                var svm = new SerieViewModelBase
                 {
                     Desc = serie.Desc,
                     Name = serie.Name,
@@ -201,7 +205,7 @@ namespace Asura.Controllers
                         })
                         .ToListAsync()
                 };
-                viewModels.Add(svm);
+                viewModels.List.Add(svm);
             }
             return View(viewModels);
         }
@@ -220,38 +224,43 @@ namespace Asura.Controllers
                 if (ext.ToLower() != "html")
                     return NotFound();
             }
-            ViewData["Blogger"] = Config.Blogger;
-            ViewData["Qiniu"] = Config.QiNiu.Domain;
-            ViewData["Title"] = $"归档 | {Config.Blogger.Btitle}";
-            ViewData["Description"] = $"博客归档，{Config.Blogger.SubTitle}";
-            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            ViewData["disqusShortName"] = Config.Disqus.Shortname;
 
-            var viewModel = await db.Articles
+            var viewModel = new ArchivesViewModel();
+            viewModel.SiteConfig = Config;
+            viewModel.Description = $"博客归档，{Config.Blogger.SubTitle}";
+            viewModel.Title = $"归档 | {Config.Blogger.Btitle}";
+            viewModel.CurrentPage = $"post-archive";
+            viewModel.ArchiveSubTitle = Config.Blogger.ArchiveSubTitle;
+
+            viewModel.List = await db.Articles
                 .Where(a => a.IsDraft == false)
                 .GroupBy(c => new
                 {
                     Year = c.CreateTime.Year,
                     Month = c.CreateTime.Month
                 })
-                .Select(c => new ArchivesViewModel
+                .Select(c => new ArchivesViewModelBase
                 {
                     Mouth = c.Key.Month,
                     Year = c.Key.Year,
-                    Articles = c.Select(avm=>new ArticleSlugViewModel
+                    Articles = c.Select(avm => new ArticleSlugViewModel
                     {
                         Slug = avm.Slug,
                         Title = avm.Title,
                         CreateTime = avm.CreateTime
                     }).ToList()
                 })
-                .OrderByDescending(a=>a.Year)
-                .ThenByDescending(a=>a.Mouth)
+                .OrderByDescending(a => a.Year)
+                .ThenByDescending(a => a.Mouth)
                 .ToListAsync();
+
+
+
+
             return View(viewModel);
         }
-        
-        
+
+
         /// <summary>
         /// 404页面
         /// </summary>
@@ -259,15 +268,14 @@ namespace Asura.Controllers
         [Route("error/404")]
         public IActionResult Error404()
         {
-            ViewData["Blogger"] = Config.Blogger;
-            ViewData["Qiniu"] = Config.QiNiu.Domain;
-            ViewData["Description"] = $"迷路了。。，{Config.Blogger.SubTitle}";
-            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            ViewData["disqusShortName"] = Config.Disqus.Shortname;
+            var viewModel = new VewModelBase();
+            viewModel.SiteConfig = Config;
+            viewModel.Description = $"迷路了。。，{Config.Blogger.SubTitle}";
+            viewModel.Title = $"Not Fount | {Config.Blogger.Btitle}";
 
-            return View();
+            return View(viewModel);
         }
-        
+
         /// <summary>
         /// 其他错误页面
         /// </summary>
@@ -276,20 +284,18 @@ namespace Asura.Controllers
         [Route("error/{code:int}")]
         public IActionResult Error(int code)
         {
-            ViewData["Blogger"] = Config.Blogger;
-            ViewData["Qiniu"] = Config.QiNiu.Domain;
-            ViewData["Title"] = $"{code} | {Config.Blogger.Btitle}";
-            ViewData["Description"] = $"发生错误了，{Config.Blogger.SubTitle}";
-            ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            ViewData["disqusShortName"] = Config.Disqus.Shortname;
+            var viewModel = new VewModelBase();
+            viewModel.SiteConfig = Config;
+            viewModel.Description = $"发生错误了，{Config.Blogger.SubTitle}";
+            viewModel.Title = $"{code} | {Config.Blogger.Btitle}";
 
             // handle different codes or just return the default error view
-            return View();
+            return View("error404",viewModel);
         }
-        
+
         public IActionResult Error()
         {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

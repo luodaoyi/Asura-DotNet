@@ -3,43 +3,6 @@ using Newtonsoft.Json;
 
 namespace Asura.Models
 {
-//    public class DisqusPostListResponse
-//    {
-//        public DisqusCursor Cursor { get; set; }
-//        public int Code { get; set; }
-//        public List<DisqusPostDetail> Response { get; set; }
-//    }
-//
-//
-//    public class DisqusPostDetail
-//    {
-//        public string Id { get; set; }
-//        public int Parent { get; set; }
-//        public string CreatedAt { get; set; }
-//        public string Message { get; set; }
-//        public bool IsDeleted { get; set; }
-//        public string Thread { get; set; }
-//        public DisqusAuthor Author { get; set; }
-//    }
-//
-//    public class DisqusCursor
-//    {
-//        public bool HasNext { get; set; }
-//        public string Next { get; set; }
-//    }
-//
-//    public class DisqusAuthor
-//    {
-//        public string Name { get; set; }
-//        public string ProfileUrl { get; set; }
-//        public DisqusAvatar Avatar { get; set; }
-//    }
-//
-//    public class DisqusAvatar
-//    {
-//        public string Cache { get; set; }
-//    }
-
     public class DisqusComments
     {
         [JsonProperty("errno")]
@@ -80,5 +43,20 @@ namespace Asura.Models
         public string Message { get; set; }
         [JsonProperty("isDeleted")]
         public bool IsDeleted { get; set; }
+    }
+
+
+    public class PostCreate
+    {
+        [JsonProperty("message")]
+        public string Message { get; set; }
+        //Message string `json:"message"`
+        //Parent string `json:"parent"`
+        //Thread string `json:"thread"`
+        //AuthorEmail string `json:"author_email"`
+        //AuthorName string `json:"autor_name"`
+        //IpAddress string `json:"ip_address"`
+        //Identifier string `json:"identifier"`
+        //UserAgent string `json:"user_agent"`
     }
 }

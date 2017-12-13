@@ -1,4 +1,4 @@
-﻿@model List<Asura.Models.ArchivesViewModel>
+﻿@model Asura.Models.ArchivesViewModel
 
 @{
     Layout = "_Layout";
@@ -13,7 +13,7 @@
                     <p><strong>预览目录</strong>
                     </p>
                     <ul>
-                        @foreach (var serie in Model)
+                        @foreach (var serie in Model.List)
                         {
                             <li><a href="#toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</a></li>
                         }
@@ -21,9 +21,9 @@
                 </nav>
             </div>
             
-            <p>@ViewData["ArchiveSubTitle"]</p>
+            <p>@(Model.ArchiveSubTitle)</p>
 
-            @foreach (var serie in Model)
+            @foreach (var serie in Model.List)
             {
                 <h3 id="toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</h3>
                 <ul>

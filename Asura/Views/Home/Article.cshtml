@@ -3,12 +3,7 @@
 
 @{
     Layout = "_Layout";
-    ViewData["CurrentPage"] = $"post-{Model.Article.Slug}";
-    var blogger = new Blogger();
-    if (ViewData["Blogger"] != null)
-    {
-        blogger = ViewData["Blogger"] as Blogger;
-    }
+   
     var days = (Model.Article.UpdateTime - DateTime.Now).Days;
 }
 
@@ -39,8 +34,8 @@
 
             <p>
                 本文链接：
-                <a rel="bookmark" title="Permalink to @ViewData["Title"]" href="//@blogger.Domain/p/@(Model.Article.Slug).html" itemprop="url">https://@blogger.Domain/p/@(Model.Article.Slug).html</a>，
-                <a href="//@blogger.Domain/p/@(Model.Article.Slug).html#comments">参与评论 »</a>
+                <a rel="bookmark" title="Permalink to @Model.Title" href="//@Model.SiteConfig.Blogger.Domain/p/@(Model.Article.Slug).html" itemprop="url">https://@(Model.SiteConfig.Blogger.Domain)/p/@(Model.Article.Slug).html</a>，
+                <a href="//@Model.SiteConfig.Blogger.Domain/p/@(Model.Article.Slug).html#comments">参与评论 »</a>
             </p>
             <p>
                 --<acronym title="End of File">EOF</acronym>--
@@ -66,12 +61,12 @@
                         <span class="date">@Model.Article.UpdateTime.ToString("D")</span>
                     </span>
                 }
-                <a href="https://@blogger.Domain/p/@(Model.Article.Slug).md">查看本文 Markdown 版本 »</a>
+                <a href="https://@(Model.SiteConfig.Blogger.Domain)/p/@(Model.Article.Slug).md">查看本文 Markdown 版本 »</a>
             </p>
 
             <p class="copyright-info">
-                @Html.Raw(blogger.CopyRight)
-                <a href="//@blogger.Domain/p/about.html#toc_1">更多说明 »</a>
+                @Html.Raw(Model.SiteConfig.Blogger.CopyRight)
+                <a href="//@(Model.SiteConfig.Blogger.Domain)/p/about.html#toc_1">更多说明 »</a>
             </p>
             @if (days > 100)
             {
@@ -114,7 +109,7 @@
 
     <section id=comments>
         <h1 class=title>Comments</h1>
-        <div class=total_thread data-identifier="post-@(Model.Article.Slug)" data-url="https://@blogger.Domain/P/@(Model.Article.Slug).html"></div>
+        <div class=total_thread data-identifier="post-@(Model.Article.Slug)" data-url="https://@(Model.SiteConfig.Blogger.Domain)/P/@(Model.Article.Slug).html"></div>
     </section>
 
 

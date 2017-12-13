@@ -1,8 +1,7 @@
-﻿@model List<Asura.Models.SerieViewModel>
+﻿@model Asura.Models.SerieViewModel
 
 @{
     Layout = "_Layout";
-    ViewData["CurrentPage"] = "series";
 }
 
 <div id=content class=inner>
@@ -14,7 +13,7 @@
                     <p><strong>预览目录</strong>
                     </p>
                     <ul>
-                        @foreach (var serie in Model)
+                        @foreach (var serie in Model.List)
                         {
                             <li><a href="#toc-@(serie.SerieId)">@serie.Name</a></li>
                         }
@@ -22,9 +21,9 @@
                 </nav>
             </div>
             
-            <p>@ViewData["SeriesSubTitle"]</p>
+            <p>@(Model.SeriesSubTitle)</p>
 
-            @foreach (var serie in Model)
+            @foreach (var serie in Model.List)
             {
                 <h3 id="toc-@(serie.SerieId)">@serie.Name</h3>
                 <p>@serie.Desc</p>
