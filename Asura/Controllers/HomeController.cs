@@ -107,6 +107,7 @@ namespace Asura.Controllers
                 ViewData["Blogger"] = Config.Blogger;
                 ViewData["Qiniu"] = Config.QiNiu.Domain;
                 ViewData["Description"] = $"{article.Desc}，{Config.Blogger.SubTitle}";
+                ViewData["disqusShortName"] = Config.Disqus.Shortname;
                 var viewModel = new ArticleViewModel();
 
                 List<SerieViewModel> series = new List<SerieViewModel>();
@@ -177,6 +178,7 @@ namespace Asura.Controllers
             ViewData["Title"] = $"专题 | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"专题列表，，{Config.Blogger.SubTitle}";
             ViewData["SeriesSubTitle"] = Config.Blogger.SeriesSubTitle;
+            ViewData["disqusShortName"] = Config.Disqus.Shortname;
             var viewModels = new List<SerieViewModel>();
             var series = await db.Series
                 .Include(i => i.SerieArticle)
@@ -223,6 +225,7 @@ namespace Asura.Controllers
             ViewData["Title"] = $"归档 | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"博客归档，{Config.Blogger.SubTitle}";
             ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
+            ViewData["disqusShortName"] = Config.Disqus.Shortname;
 
             var viewModel = await db.Articles
                 .Where(a => a.IsDraft == false)
@@ -260,7 +263,8 @@ namespace Asura.Controllers
             ViewData["Qiniu"] = Config.QiNiu.Domain;
             ViewData["Description"] = $"迷路了。。，{Config.Blogger.SubTitle}";
             ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            
+            ViewData["disqusShortName"] = Config.Disqus.Shortname;
+
             return View();
         }
         
@@ -277,7 +281,8 @@ namespace Asura.Controllers
             ViewData["Title"] = $"{code} | {Config.Blogger.Btitle}";
             ViewData["Description"] = $"发生错误了，{Config.Blogger.SubTitle}";
             ViewData["ArchiveSubTitle"] = Config.Blogger.ArchiveSubTitle;
-            
+            ViewData["disqusShortName"] = Config.Disqus.Shortname;
+
             // handle different codes or just return the default error view
             return View();
         }

@@ -40,39 +40,41 @@ namespace Asura.Controllers
                 .Forum(Config.Disqus.Shortname)
                 .Limit(50);
 
-            var response = await DisqusApi.Threads.ListPostsAsync(request).ConfigureAwait(false);
+            CursoredDisqusResponse<IEnumerable<Disqus.NET.Models.DisqusPost>>  response = null; 
+            try
+            {
+                response = await DisqusApi.Threads.ListPostsAsync(request).ConfigureAwait(false);
 
-            if (response == null)
+            }
+            catch (DisqusApiException ex)
             {
                 dcs.ErrNo = 1;
-                dcs.ErrMsg = "系统错误";
+                dcs.ErrMsg = ex.Error;
+                return Json(dcs);
             }
-            else
+            dcs.ErrNo = (int)response.Code;
+            if (response.Cursor != null)
             {
-                dcs.ErrNo = (int)response.Code;
-                if (response.Cursor != null)
+                dcs.Data.Next = response.Cursor.Next;
+            }
+            dcs.Data.Total = response.Response.Count();
+            dcs.Data.Comments = new List<DisqusCommentsDetail>();
+            foreach (var detail in response.Response)
+            {
+                if (dcs.Data != null && string.IsNullOrEmpty(dcs.Data.Thread))
+                    dcs.Data.Thread = detail.Thread.Id;
+                var comm = new DisqusCommentsDetail()
                 {
-                    dcs.Data.Next = response.Cursor.Next;
-                }
-                dcs.Data.Total = response.Response.Count();
-                dcs.Data.Comments = new List<DisqusCommentsDetail>();
-                foreach (var detail in response.Response)
-                {
-                    if (dcs.Data != null && string.IsNullOrEmpty(dcs.Data.Thread))
-                        dcs.Data.Thread = detail.Thread.Id;
-                    var comm = new DisqusCommentsDetail()
-                    {
-                        Id = detail.Id,
-                        Name = detail.Author.Name,
-                        Parent = detail.Parent.Id,
-                        Url = detail.Author.ProfileUrl,
-                        Avatar = detail.Author.Username,
-                        CreatedAtStr = CommHelper.ConvertStr(detail.CreatedAt),
-                        Message = detail.Message,
-                        IsDeleted = detail.IsDeleted
-                    };
-                    dcs.Data.Comments.Add(comm);
-                }
+                    Id = detail.Id,
+                    Name = detail.Author.Name,
+                    Parent = detail.Parent.Id,
+                    Url = detail.Author.ProfileUrl,
+                    Avatar = detail.Author.Username,
+                    CreatedAtStr = CommHelper.ConvertStr(detail.CreatedAt),
+                    Message = detail.Message,
+                    IsDeleted = detail.IsDeleted
+                };
+                dcs.Data.Comments.Add(comm);
             }
             return Json(dcs);
         }

@@ -18,11 +18,17 @@
     <title>@ViewData["Title"]</title>
     <link rel="apple-touch-icon" href="//@ViewData["Qiniu"]/static/img/favicon.ico">
     <link rel="search" type="application/opensearchdescription+xml" href="//@blogger.Domain/opensearch.xml" title="@blogger.Btitle">
-    
+
     <link rel="stylesheet" href="~/css/site.min.css">
-  
-    @RenderSection("headjs",false)
-    
+
+    <script type="text/javascript">
+        disqusShortName = "@(ViewData["disqusShortName"])";
+        QiniuDomain = "@ViewData["Qiniu"]";
+        WebSiteDomain = "@blogger.Domain";
+    </script>
+
+    @RenderSection("headjs", false)
+
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@ViewData["Domain"]/rss.html">
     <meta name="description" content="@ViewData["Description"]">
 </head>
