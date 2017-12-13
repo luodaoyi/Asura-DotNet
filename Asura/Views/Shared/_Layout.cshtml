@@ -13,7 +13,12 @@
     <link rel="apple-touch-icon" href="//@viewModel.SiteConfig.QiNiu.Domain/static/img/favicon.ico">
     <link rel="search" type="application/opensearchdescription+xml" href="//@viewModel.SiteConfig.Blogger.Domain/opensearch.xml" title="@viewModel.SiteConfig.Blogger.Btitle">
 
-    <link rel="stylesheet" href="~/css/site.min.css">
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/site.css"/>
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
+    </environment>
 
     <script type="text/javascript">
         disqusShortName = "@(viewModel.SiteConfig.Disqus.Shortname)";
@@ -90,9 +95,15 @@
     </div>
 </div>
 
-<input type=hidden id=CURRENT_PAGE value="@(ViewData["CurrentPage"])">
-<input type=hidden id=CDN_DOMAIN value="//@(ViewData["Qiniu"])">
-<script type="text/javascript" src="~/js/site.min.js"></script>
+<input type=hidden id=CURRENT_PAGE value="@(viewModel.CurrentPage)">
+<input type=hidden id=CDN_DOMAIN value="//@(viewModel.SiteConfig.QiNiu.Domain)">
+
+<environment names="Development">
+    <script type="text/javascript" src="~/js/site.js"></script>
+</environment>
+<environment names="Staging,Production">
+    <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
+</environment>
 
 </body>
 </html>

@@ -32,6 +32,7 @@ namespace Asura.Controllers
         [Route("index")]
         [Route("page/{page}")]
         [Route("page/{page}.{ext}")]
+        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Index(int page, string ext)
         {
             if (!string.IsNullOrEmpty(ext))
@@ -73,6 +74,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("p/{slug}")]
         [Route("p/{slug}.{ext}")]
+        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Article(string slug, string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -167,6 +169,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("series")]
         [Route("series.{ext}")]
+        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Series(string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -217,6 +220,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("archives")]
         [Route("archives.{ext}")]
+        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Archives(string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -266,6 +270,7 @@ namespace Asura.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("error/404")]
+        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public IActionResult Error404()
         {
             var viewModel = new VewModelBase();

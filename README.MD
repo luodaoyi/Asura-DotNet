@@ -158,11 +158,14 @@ sudo ./caddy_install.sh install http.authz,http.cache,http.cgi,http.cors,http.ex
 
 完毕后生成反向代理配置:
 
-echo "https://yourdomain {
+echo "https://yourdomain.com {
+ root /var/www/your-path
  gzip
  minify
- tls youemail
- proxy / http://127.0.0.1:5000
+ tls your-email
+ proxy / http://127.0.0.1:5000 {
+  except /js /images /css
+ }
 }" > /usr/local/caddy/Caddyfile
 
 
