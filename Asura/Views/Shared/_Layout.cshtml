@@ -20,6 +20,8 @@
     <link rel="search" type="application/opensearchdescription+xml" href="//@blogger.Domain/opensearch.xml" title="@blogger.Btitle">
     
     <link rel="stylesheet" href="~/css/site.min.css">
+  
+    @RenderSection("headjs",false)
     
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="//@ViewData["Domain"]/rss.html">
     <meta name="description" content="@ViewData["Description"]">
@@ -87,6 +89,9 @@
         </footer>
     </div>
 </div>
+
+<input type=hidden id=CURRENT_PAGE value="@(ViewData["CurrentPage"])">
+<input type=hidden id=CDN_DOMAIN value="//@(ViewData["Qiniu"])">
 <script type="text/javascript" src="~/js/site.min.js"></script>
 
 </body>

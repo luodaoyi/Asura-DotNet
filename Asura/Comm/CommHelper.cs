@@ -10,11 +10,10 @@ namespace Asura.Comm
         /// <summary>
         /// 将时间转换为间隔
         /// </summary>
-        /// <param name="str"></param>
+        /// <param name="t"></param>
         /// <returns></returns>
-        public static string ConvertStr(string str)
+        public static string ConvertStr(DateTime t)
         {
-            var t = DateTime.Parse(str);
             var now = DateTime.UtcNow;
 
             var y1 = t.Year;

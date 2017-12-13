@@ -99,15 +99,11 @@ namespace Asura.Service
         public string Shortname { get; set; }
         public string Publickey { get; set; }
         public string Accesstoken { get; set; }
-        public string Postscount { get; set; }
-        public string Postslist { get; set; }
-        public string Postcreate { get; set; }
-        public string Postapprove { get; set; }
-
         /// <summary>
-        /// disqus.js 文件名
+        /// 国内不能访问Disqus 这里是用来在服务器上调用相关api的反向代理域名配置
         /// </summary>
-        public string Embed { get; set; }
+        public string ApiDomain { get; set; }
+
 
         /// <summary>
         /// 获取评论数量间隔

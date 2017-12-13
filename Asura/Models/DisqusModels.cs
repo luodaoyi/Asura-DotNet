@@ -3,42 +3,42 @@ using Newtonsoft.Json;
 
 namespace Asura.Models
 {
-    public class DisqusPostListResponse
-    {
-        public DisqusCursor Cursor { get; set; }
-        public int Code { get; set; }
-        public List<DisqusPostDetail> Response { get; set; }
-    }
-
-
-    public class DisqusPostDetail
-    {
-        public string Id { get; set; }
-        public int Parent { get; set; }
-        public string CreatedAt { get; set; }
-        public string Message { get; set; }
-        public bool IsDeleted { get; set; }
-        public string Thread { get; set; }
-        public DisqusAuthor Author { get; set; }
-    }
-
-    public class DisqusCursor
-    {
-        public bool HasNext { get; set; }
-        public string Next { get; set; }
-    }
-
-    public class DisqusAuthor
-    {
-        public string Name { get; set; }
-        public string ProfileUrl { get; set; }
-        public DisqusAvatar Avatar { get; set; }
-    }
-
-    public class DisqusAvatar
-    {
-        public string Cache { get; set; }
-    }
+//    public class DisqusPostListResponse
+//    {
+//        public DisqusCursor Cursor { get; set; }
+//        public int Code { get; set; }
+//        public List<DisqusPostDetail> Response { get; set; }
+//    }
+//
+//
+//    public class DisqusPostDetail
+//    {
+//        public string Id { get; set; }
+//        public int Parent { get; set; }
+//        public string CreatedAt { get; set; }
+//        public string Message { get; set; }
+//        public bool IsDeleted { get; set; }
+//        public string Thread { get; set; }
+//        public DisqusAuthor Author { get; set; }
+//    }
+//
+//    public class DisqusCursor
+//    {
+//        public bool HasNext { get; set; }
+//        public string Next { get; set; }
+//    }
+//
+//    public class DisqusAuthor
+//    {
+//        public string Name { get; set; }
+//        public string ProfileUrl { get; set; }
+//        public DisqusAvatar Avatar { get; set; }
+//    }
+//
+//    public class DisqusAvatar
+//    {
+//        public string Cache { get; set; }
+//    }
 
     public class DisqusComments
     {
@@ -65,9 +65,9 @@ namespace Asura.Models
     public class DisqusCommentsDetail
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("parent")]
-        public int Parent { get; set; }
+        public long Parent { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("url")]

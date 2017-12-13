@@ -18,7 +18,7 @@ stringProto.stripTags = function () {
         n in e ? e[n] instanceof Array ? e[n].push(i) : e[n] = [e[n], i] : e[n] = /\[\]$/.test(n) ? [i] : i
     }), t ? e[t] : e
 }, function (t) {
-    t.disqus_shortname = "{{.Disqus.ShortName}}", $.each(["CURRENT_PAGE", "CDN_DOMAIN"], function (a, e) {
+    t.disqus_shortname = disqusShortName, $.each(["CURRENT_PAGE", "CDN_DOMAIN"], function (a, e) {
         t[e] = "";
         var n = $("#" + e);
         n && (t[e] = n.val())
@@ -71,7 +71,7 @@ stringProto.stripTags = function () {
             var t = $(this);
             t.click(function () {
                 var a, e, n, i, o = 1000 * (t.data("dur") || 20);
-                t.css("cursor") && (a = "/images/blank.gif", e = t.prop("src"), n = t.data("replace"), t.prop("src", a), t.css("cursor", ""), i = new Image, i.onload = function () {
+                t.css("cursor") && (a = "/static/img/blank.gif", e = t.prop("src"), n = t.data("replace"), t.prop("src", a), t.css("cursor", ""), i = new Image, i.onload = function () {
                     t.prop("src", n), setTimeout(function () {
                         t.prop("src", e), t.css("cursor", "pointer")
                     }, o)
@@ -136,7 +136,7 @@ stringProto.stripTags = function () {
                     var e = this;
                     t.disqus_config = function () {
                         this.page.url = e.url, this.page.identifier = e.identifier
-                    }, $.ajax({url: t.CDN_DOMAIN + "/static/js/{{.Disqus.Embed}}", dataType: "script", cache: !0})
+                    }, $.ajax({url: t.CDN_DOMAIN + "embed.js", dataType: "script", cache: !0})
                 }
             }, init: function (t, a, e) {
                 t.html("评论完整模式加载中...<br /><br />注：如果长时间无法加载，请针对 disq.us | disquscdn.com | disqus.com 启用代理。"), this.elThread = t, this.url = a, this.identifier = e
@@ -201,7 +201,7 @@ stringProto.stripTags = function () {
     t.TotalThread.addService(a)
 }(this), function (t, a) {
     var e = a.domain;
-    return "{{.Qiniu.Domain}}" == e ? void (location.href = location.href.replace(/(https?:\/\/[^\/]+)\//i, "//{{.Domain}}")) : (function () {
+    return QiniuDomain == e ? void (location.href = location.href.replace(/(https?:\/\/[^\/]+)\//i, "//"+WebSiteDomain)) : (function () {
         var t, a = location.search.queryUrl();
         "1" == a.clear_ls && (delete a.clear_ls, t = $.param(a), setTimeout(function () {
             t ? location.search = $.param(a) : location.href = location.href.replace(/\?.*$/, "")
@@ -232,4 +232,3 @@ stringProto.stripTags = function () {
         }()
     }))
 }(this, document);
-

@@ -46,7 +46,8 @@ namespace Asura.Controllers
             ViewData["Qiniu"] = Config.QiNiu.Domain;
             ViewData["Title"] = $"{Config.Blogger.Btitle} | {Config.Blogger.SubTitle}";
             ViewData["Description"] = $"博客首页，{Config.Blogger.SubTitle}";
-
+            ViewData["disqusShortName"] = Config.Disqus.Shortname;
+            
             var pageSize = 10;
             var viewModel = new HomeViewModel();
             var startRow = (page - 1) * pageSize;
