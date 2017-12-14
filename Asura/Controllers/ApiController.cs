@@ -45,34 +45,41 @@ namespace Asura.Controllers
                 .Limit(50);
 
             CursoredDisqusResponse<IEnumerable<Disqus.NET.Models.DisqusPost>> response = null;
-            try
+            var reTry = false;
+            do
             {
-                response = await DisqusApi.Threads.ListPostsAsync(request);
-            }
-            catch (DisqusApiException ex)
-            {
-                dcs.ErrNo = (int)ex.Code;
-                dcs.ErrMsg = ex.Error;
-
-                if (ex.Code == DisqusApiResponseCode.MissingOrInvalidArgument)
+                try
                 {
-                    var article = await db.Articles.Where(w => (w.Slug == slug) && !w.IsDraft)
-                        .SingleOrDefaultAsync();
-                    if (article == null) return Json(dcs);
-                    var createReques = DisqusThreadCreateRequest
-                        .New(Config.Disqus.Shortname, article.Title)
-                        .Identifier($"post-{slug}");
-
-                    var rep = await DisqusApi.Threads.CreateAsync(DisqusAccessToken.Create(Config.Disqus.Accesstoken), createReques);
-                    return Json(rep);
+                    response = await DisqusApi.Threads.ListPostsAsync(request);
+                    if (response != null) reTry = false;
                 }
+                catch (DisqusApiException ex)
+                {
+                    dcs.ErrNo = (int)ex.Code;
+                    dcs.ErrMsg = ex.Error;
 
-                return Json(dcs);
-            }
-            if(null == response)
+                    if (ex.Code == DisqusApiResponseCode.MissingOrInvalidArgument)
+                    {
+                        var article = await db.Articles.Where(w => (w.Slug == slug) && !w.IsDraft)
+                            .SingleOrDefaultAsync();
+                        if (article == null) return Json(dcs);
+                        var createReques = DisqusThreadCreateRequest
+                            .New(Config.Disqus.Shortname, article.Title)
+                            .Identifier($"post-{slug}");
+
+                        var rep = await DisqusApi.Threads.CreateAsync(DisqusAccessToken.Create(Config.Disqus.Accesstoken), createReques);
+                        reTry = true;
+                    }
+
+                    return Json(dcs);
+                }
+            } while (reTry);
+
+            if (null == response)
             {
                 dcs.ErrNo = 1;
                 dcs.ErrMsg = "调用disqus接口失败!";
+                return Json(dcs);
             }
 
             dcs.ErrNo = (int)response.Code;
@@ -108,5 +115,30 @@ namespace Asura.Controllers
             }
             return Json(dcs);
         }
+
+
+        [Route("disqus/form/post-{slug}")]
+        public async Task<IActionResult> DisqusForm(string param)
+        {
+            string[] paramsList = param.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            if (paramsList.Count() < 2 || string.IsNullOrEmpty(paramsList[1]) || string.IsNullOrEmpty(paramsList[0]))
+            {
+                return Content("出错啦！！");
+            }
+
+            var arcticle = await db.Articles.Where(w => !w.IsDraft && w.Slug == paramsList[0]).SingleOrDefaultAsync();
+
+            if(null == arcticle)  return Content("找不到这篇文章啊！！");
+
+            DisqusPagrViewModel viewModel = new DisqusPagrViewModel()
+            {
+                Title = $"发表评论 | {Config.Blogger.Btitle}",
+                ATitle = arcticle.Title,
+                Thread = paramsList[1],
+                Slug = arcticle.Slug
+            };
+            return View(viewModel);
+        }
+
     }
 }

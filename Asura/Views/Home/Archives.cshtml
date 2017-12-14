@@ -4,26 +4,26 @@
     Layout = "_Layout";
 }
 
-<cache vary-by="@Model">
-</cache>
-
 <div id=content class=inner>
     <article class="post post-series">
         <h1 class=title>归档</h1>
         <div class="entry-content">
             <div id="toc-container">
                 <nav id="toc">
-                    <p><strong>预览目录</strong>
+                    <p>
+                        <strong>预览目录</strong>
                     </p>
                     <ul>
                         @foreach (var serie in Model.List)
                         {
-                            <li><a href="#toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</a></li>
+                            <li>
+                                <a href="#toc-@(serie.Year)-@(serie.Mouth)">@(serie.Year)年@(serie.Mouth)月</a>
+                            </li>
                         }
                     </ul>
                 </nav>
             </div>
-            
+
             <p>@(Model.ArchiveSubTitle)</p>
 
             @foreach (var serie in Model.List)

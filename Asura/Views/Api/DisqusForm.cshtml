@@ -1,4 +1,5 @@
-﻿<!Doctype html>
+﻿@model Asura.Models.DisqusPagrViewModel
+<!Doctype html>
 <html lang="zh-CN">
 
 <head>
@@ -8,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name=referrer content=always>
     <meta name=robots content="noindex, nofollow, noarchive">
-    <title>@ViewData["Title"]</title>
+    <title>@Model.Title</title>
     <style type="text/css">
         * {
             margin: 0;
@@ -112,7 +113,7 @@
 
 <body>
     <header>
-        <h3>对「{{.ATitle}}」发表评论</h3>
+        <h3>对「@Model.ATitle」发表评论</h3>
     </header>
     <div class=bd>
         <div class="card submit">
@@ -128,9 +129,9 @@
                                 <span>内容：</span>
                                 <textarea class="line" name="message" required placeholder="请不要发表无意义的评论内容"></textarea>
                                 <li>
-                                    <input type=hidden name=thread value="{{.Thread}}">
+                                    <input type=hidden name=thread value="@Model.Thread">
                                     <input type=hidden name=parent value="">
-                                    <input type=hidden name=identifier value="post-{{.Slug}}">
+                                    <input type=hidden name=identifier value="post-@Model.Slug">
                                     <input type=hidden name=next value="">
                                     <button class="btn-submit" type=submit>立即发表</button>
                                     <li class=tips>注：通过本表单提交的数据，会原样转发给 Disqus，本站不做任何存储和记录。
