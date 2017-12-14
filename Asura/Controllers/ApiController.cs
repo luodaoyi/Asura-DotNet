@@ -117,9 +117,10 @@ namespace Asura.Controllers
         }
 
 
-        [Route("disqus/form/post-{slug}")]
+        [Route("disqus/form/post-{param}/")]
         public async Task<IActionResult> DisqusForm(string param)
         {
+            if (string.IsNullOrEmpty(param)) return Content("出错啦！！");
             string[] paramsList = param.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
             if (paramsList.Count() < 2 || string.IsNullOrEmpty(paramsList[1]) || string.IsNullOrEmpty(paramsList[0]))
             {
