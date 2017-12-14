@@ -27,7 +27,7 @@ namespace Asura.Controllers
             this.Config = option.Value;
             this.db = context;
             //将服务器上的disqus.com host指向 23.235.33.134 就不用使用代理了
-            //Disqus.NET.DisqusEndpoints.SetProxy(this.Config.Disqus.ApiDomain);
+            Disqus.NET.DisqusEndpoints.SetProxy(this.Config.Disqus.ApiDomain);
             this.DisqusApi = new DisqusApi(DisqusAuthMethod.PublicKey, this.Config.Disqus.Publickey);
         }
 
@@ -90,14 +90,20 @@ namespace Asura.Controllers
                 var comm = new DisqusCommentsDetail()
                 {
                     Id = detail.Id,
-                    Name = detail.Author.Name,
-                    Parent = detail.Parent.Id,
-                    Url = detail.Author.ProfileUrl,
-                    Avatar = detail.Author.Name,
                     CreatedAtStr = CommHelper.ConvertStr(detail.CreatedAt),
                     Message = detail.Message,
                     IsDeleted = detail.IsDeleted
                 };
+                if (detail.Author != null)
+                {
+                    comm.Name = detail.Author.Name;
+                    comm.Url = detail.Author.ProfileUrl;
+                    comm.Avatar = detail.Author.Name;
+                }
+                if (detail.Parent != null)
+                {
+                    comm.Parent = detail.Parent.Id;
+                }
                 dcs.Data.Comments.Add(comm);
             }
             return Json(dcs);
