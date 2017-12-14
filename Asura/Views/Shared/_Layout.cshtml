@@ -2,7 +2,6 @@
     var viewModel = Model as Asura.Models.VewModelBase;
 }
 
-
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
@@ -17,7 +16,7 @@
 
     @*    <link rel="stylesheet" href="~/css/site.css"/>*@
     <cache>
-        <staticFile type="css" path="css/site.min.css"/>
+        <staticFile type="css" path="css/site.min.css" />
     </cache>
 
     <script type="text/javascript">
@@ -34,74 +33,74 @@
 
 <body>
 
-<div class="container">
-    <div class="left-col">
-        <div class="intrude-less">
-            <header id="header" class="inner">
-                <div class="profilepic">
-                    <a href="/"></a>
-                </div>
-                <h1>
-                    <a href="/">@viewModel.SiteConfig.Blogger.BlogName</a>
-                </h1>
-                <p class="subtitle">@viewModel.SiteConfig.Blogger.SubTitle</p>
-                <nav id="main-nav">
-                    <ul>
-                        <li>
-                            <a href="/">
-                                <span>首页</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/series.html">
-                                <span>专题</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/archives.html">
-                                <span>归档</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/p/blogroll.html">
-                                <span>友链</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/p/about.html">
-                                <span>关于</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <nav id="sub-nav">
-                    <div class="social">
-                        <a target="_blank" class="rss" href="//@viewModel.SiteConfig.Blogger.Domain/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
-                        <a class="search" href="/search.html" title="站内搜索" aria-label="站内搜索">Search</a>
+    <div class="container">
+        <div class="left-col">
+            <div class="intrude-less">
+                <header id="header" class="inner">
+                    <div class="profilepic">
+                        <a href="/"></a>
                     </div>
-                </nav>
-            </header>
+                    <h1>
+                        <a href="/">@viewModel.SiteConfig.Blogger.BlogName</a>
+                    </h1>
+                    <p class="subtitle">@viewModel.SiteConfig.Blogger.SubTitle</p>
+                    <nav id="main-nav">
+                        <ul>
+                            <li>
+                                <a href="/">
+                                    <span>首页</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/series.html">
+                                    <span>专题</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/archives.html">
+                                    <span>归档</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/p/blogroll.html">
+                                    <span>友链</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/p/about.html">
+                                    <span>关于</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <nav id="sub-nav">
+                        <div class="social">
+                            <a target="_blank" class="rss" href="//@viewModel.SiteConfig.Blogger.Domain/rss.html" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
+                            <a class="search" href="/search.html" title="站内搜索" aria-label="站内搜索">Search</a>
+                        </div>
+                    </nav>
+                </header>
+            </div>
+        </div>
+        <div class="mid-col">
+            <div class="mid-col-container">@RenderBody()</div>
+            <footer id=footer class=inner>
+                © @DateTime.Now.Year - @viewModel.SiteConfig.Blogger.Btitle -
+                <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@viewModel.SiteConfig.Blogger.Beian</a>
+                <br>Powered by
+                <a target=_blank href="//github.com/luodaoyi/asura">Asura</a> &
+                <a target=_blank href="//github.com/eiblog/eiblog">Eiblog</a> &
+                <a target=_blank rel="nofollow designer" class=external href="//imququ.com">JerryQu</a>
+            </footer>
         </div>
     </div>
-    <div class="mid-col">
-        <div class="mid-col-container">@RenderBody()</div>
-        <footer id=footer class=inner>
-            © @DateTime.Now.Year - @viewModel.SiteConfig.Blogger.Btitle -
-            <a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">@viewModel.SiteConfig.Blogger.Beian</a>
-            <br>Powered by
-            <a target=_blank href="//github.com/luodaoyi/asura">Asura</a> &
-            <a target=_blank href="//github.com/eiblog/eiblog">Eiblog</a> &
-            <a target=_blank rel="nofollow designer" class=external href="//imququ.com">JerryQu</a>
-        </footer>
-    </div>
-</div>
 
-<input type=hidden id=CURRENT_PAGE value="@(viewModel.CurrentPage)">
-<input type=hidden id=CDN_DOMAIN value="https://@(viewModel.SiteConfig.QiNiu.Domain)">
-<cache>
-    @*<script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>*@
-    <staticFile type="js" path="js/site.min.js"/>
-</cache>
+    <input type=hidden id=CURRENT_PAGE value="@(viewModel.CurrentPage)">
+    <input type=hidden id=CDN_DOMAIN value="https://@(viewModel.SiteConfig.QiNiu.Domain)">
+    <cache>
+        @*<script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>*@
+        <staticFile type="js" path="js/site.min.js" />
+    </cache>
 
 </body>
 </html>

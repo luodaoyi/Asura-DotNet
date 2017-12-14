@@ -46,17 +46,26 @@ namespace Asura.Models
     }
 
 
-    public class PostCreate
+    public class DisqusPostCreate
     {
-        [JsonProperty("message")]
-        public string Message { get; set; }
-        //Message string `json:"message"`
-        //Parent string `json:"parent"`
-        //Thread string `json:"thread"`
-        //AuthorEmail string `json:"author_email"`
-        //AuthorName string `json:"autor_name"`
-        //IpAddress string `json:"ip_address"`
-        //Identifier string `json:"identifier"`
-        //UserAgent string `json:"user_agent"`
+        [JsonProperty("errmsg")]
+        public string ErrMsg { get; set; }
+        [JsonProperty("errno")]
+        public int ErrNo { get; set; }
+        [JsonProperty("data")]
+        public DisqusCommentsDetail Data { get; set; }
+
+    }
+
+    public class DiqsusPostDetail
+    {
+
+    }
+
+
+    public class DisqusPostCreateResponse
+    {
+        public int Code { get; set; }
+        public DiqsusPostDetail Response { get; set; }
     }
 }
