@@ -2,7 +2,7 @@ echo "scp太慢干掉的时候要先删除"
 rm -rf ~/RiderProjects/Asura/Asura/Publish/
 
 echo "ssh 到服务器上停止服务！"
-ssh jd "systemctl stop asura-dev;exit"
+ssh jd "systemctl stop asura-dev;rm -rf /var/www/asura/Publish;exit"
 echo "进入项目目录准备编译发布"
 cd Asura/
 dotnet publish -c Release -o Publish --runtime ubuntu.16.04-x64

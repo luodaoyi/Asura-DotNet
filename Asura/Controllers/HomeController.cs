@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,17 +7,22 @@ using Asura.Database;
 using Microsoft.AspNetCore.Mvc;
 using Asura.Models;
 using Asura.Service;
+using Disqus.NET;
+using Disqus.NET.Requests;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Asura.Controllers
 {
     public class HomeController : Controller
     {
-        private SiteConfig Config;
-        private AsuraContext db;
+        private readonly SiteConfig Config;
+        private readonly AsuraContext db;
 
-        public HomeController(IOptions<SiteConfig> option, AsuraContext context)
+        public HomeController(IOptions<SiteConfig> option,
+            AsuraContext context)
         {
             Config = option.Value;
             db = context;
@@ -32,7 +38,7 @@ namespace Asura.Controllers
         [Route("index")]
         [Route("page/{page}")]
         [Route("page/{page}.{ext}")]
-        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Index(int page, string ext)
         {
             if (!string.IsNullOrEmpty(ext))
@@ -52,16 +58,17 @@ namespace Asura.Controllers
             viewModel.CurrentPage = "blog-home";
 
             var startRow = (page - 1) * pageSize;
-            var query = await db.Articles.Where(w => w.IsDraft == false).OrderByDescending(p => p.CreateTime)
+            var query = await db.Articles.Where(w => !w.IsDraft && w.Type == ArticleType.Post)
+                .OrderByDescending(p => p.CreateTime)
                 .Skip(startRow)
                 .Take(pageSize).ToListAsync();
 
             viewModel.Articles = query;
             viewModel.Prev = page - 1;
-            viewModel.Next = (await db.Articles.Where(w => w.IsDraft == false).CountAsync()) > page * pageSize + 1
+            viewModel.Next = (await db.Articles.Where(w => !w.IsDraft && w.Type == ArticleType.Post).CountAsync()) >
+                             page * pageSize + 1
                 ? page + 1
                 : 0;
-
 
             return View(viewModel);
         }
@@ -74,7 +81,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("p/{slug}")]
         [Route("p/{slug}.{ext}")]
-        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Article(string slug, string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -90,12 +97,13 @@ namespace Asura.Controllers
                 article = await db.Articles
                     .Include(p => p.SerieArticle).ThenInclude(se => se.Serie)
                     .Include(p => p.TagArticles).ThenInclude(se => se.Tag)
-                    .Where(w => (w.IsDraft == false && w.Slug == slug))
+                    .Where(w => (!w.IsDraft && w.Slug == slug && w.Type == ArticleType.Post))
                     .SingleOrDefaultAsync();
             }
 
             if (article == null) return NotFound();
 
+            
             if (ext == "md")
             {
                 var footer =
@@ -105,7 +113,6 @@ namespace Asura.Controllers
             // 请求html页面
             if (ext == "html")
             {
-
                 var viewModel = new ArticleViewModel();
 
                 viewModel.SiteConfig = Config;
@@ -139,7 +146,9 @@ namespace Asura.Controllers
                 viewModel.Tags = article.TagArticles.Select(s => s.Tag).ToList();
 
                 viewModel.Prev = await db.Articles
-                    .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId - 1))
+                    .Where(w => (!w.IsDraft
+                                 && w.ArticleId == article.ArticleId - 1
+                                 && w.Type == ArticleType.Post))
                     .Select(ar => new ArticleSlugViewModel
                     {
                         Slug = ar.Slug,
@@ -148,7 +157,9 @@ namespace Asura.Controllers
                     })
                     .SingleOrDefaultAsync();
                 viewModel.Next = await db.Articles
-                    .Where(w => (w.IsDraft == false && w.ArticleId == article.ArticleId + 1))
+                    .Where(w => (!w.IsDraft
+                                 && w.ArticleId == article.ArticleId + 1
+                                 && w.Type == ArticleType.Post))
                     .Select(ar => new ArticleSlugViewModel
                     {
                         Slug = ar.Slug,
@@ -169,7 +180,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("series")]
         [Route("series.{ext}")]
-        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Series(string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -220,7 +231,7 @@ namespace Asura.Controllers
         /// <returns></returns>
         [Route("archives")]
         [Route("archives.{ext}")]
-        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public async Task<IActionResult> Archives(string ext = "html")
         {
             if (!string.IsNullOrEmpty(ext))
@@ -237,7 +248,7 @@ namespace Asura.Controllers
             viewModel.ArchiveSubTitle = Config.Blogger.ArchiveSubTitle;
 
             viewModel.List = await db.Articles
-                .Where(a => a.IsDraft == false)
+                .Where(a => !a.IsDraft && a.Type == ArticleType.Post)
                 .GroupBy(c => new
                 {
                     Year = c.CreateTime.Year,
@@ -259,8 +270,6 @@ namespace Asura.Controllers
                 .ToListAsync();
 
 
-
-
             return View(viewModel);
         }
 
@@ -270,7 +279,7 @@ namespace Asura.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("error/404")]
-        [ResponseCache(VaryByHeader ="Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
+        [ResponseCache(VaryByHeader = "Accept-Encoding", Location = ResponseCacheLocation.Any, Duration = 120)]
         public IActionResult Error404()
         {
             var viewModel = new VewModelBase();
@@ -295,12 +304,12 @@ namespace Asura.Controllers
             viewModel.Title = $"{code} | {Config.Blogger.Btitle}";
 
             // handle different codes or just return the default error view
-            return View("error404",viewModel);
+            return View("error404", viewModel);
         }
 
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

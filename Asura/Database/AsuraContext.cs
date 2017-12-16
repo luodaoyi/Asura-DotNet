@@ -76,13 +76,22 @@ namespace Asura.Database
         }
     }
 
+    public enum ArticleType
+    {
+        Post,
+        Page
+    }
     /// <summary>
     /// 文章
     /// </summary>
     public class Article
     {
         public int ArticleId { get; set; }
-
+        
+        /// <summary>
+        /// 文章类型
+        /// </summary>
+        public ArticleType Type { get; set; }
         /// <summary>
         /// 作者名
         /// </summary>
